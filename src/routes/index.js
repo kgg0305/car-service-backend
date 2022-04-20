@@ -4,7 +4,7 @@ var router = express.Router();
 
 // Connection DB
 var connection = mysql.createConnection({
-    host:'127.0.0.1', 
+    host:'localhost', 
     user:'auto_dev', 
     password:'auto_dev12#', 
     port:3306, 
