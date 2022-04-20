@@ -4,7 +4,7 @@ var router = express.Router();
 
 // Connection DB
 var connection = mysql.createConnection({
-    host:'localhost', 
+    host:'content-auto-prod.cluster-cwvtgy0jxm2o.ap-northeast-2.rds.amazonaws.com', 
     user:'auto_dev', 
     password:'auto_dev12#', 
     port:3306, 
