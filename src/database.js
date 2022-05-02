@@ -2,20 +2,12 @@ var mysql = require('mysql');
 
 // Connection DB
 var connection = mysql.createConnection({
-    host: 'content-auto-prod.cluster-cwvtgy0jxm2o.ap-northeast-2.rds.amazonaws.com', 
-    user: 'auto_dev', 
-    password: 'auto_dev12#', 
-    port: 3306, 
-    database: 'automobile_dev' 
+    host: process.env.MySQLDB_HOST, 
+    user: process.env.MySQLDB_USER, 
+    password: process.env.MySQLDB_PASSWORD, 
+    port: process.env.MySQLDB_PORT, 
+    database: process.env.MySQLDB_NAME
 });
-
-// var connection = mysql.createConnection({
-//     host: '127.0.0.1', 
-//     user: 'root', 
-//     password: '', 
-//     port: 3306, 
-//     database: 'automobile_dev' 
-// });
 
 // Connection
 connection.connect(function (err) {
