@@ -3,6 +3,7 @@ var express = require('express');
 var cookieParser = require('cookie-parser');
 var indexRouter = require('./routes/index');
 var testRouter = require('./routes/test');
+var fileRouter = require('./routes/file');
 var brandRouter = require('./routes/brand');
 var groupRouter = require('./routes/group');
 var carKindRouter = require('./routes/carKind');
@@ -24,9 +25,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(cors());
+app.options('*', cors())
 
 app.use('/api', indexRouter);
 app.use('/test', testRouter);
+app.use('/file', fileRouter);
 app.use('/brand', brandRouter);
 app.use('/group', groupRouter);
 app.use('/car-kind', carKindRouter);

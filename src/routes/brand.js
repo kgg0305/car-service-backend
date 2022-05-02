@@ -124,10 +124,6 @@ router.post('/check-name', function(req, res, next) {
     });
 });
 
-router.post('/logo', function(req, res, next) {
-    console.log(req.files);
-});
-
 router.put('/:idx', function(req, res, next) {
     var idx = req.params.idx;
     const field_names = table_fields.map(x => x + ' = ?').join(', ');
