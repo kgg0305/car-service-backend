@@ -11,7 +11,7 @@ module.exports = {
 				'node_modules'
 			],
 			env: {
-				PORT: 4200,
+				PORT: 80,
 				NODE_ENV: 'development',
 				MySQLDB_HOST: '127.0.0.1',
 				MySQLDB_PORT: 3306,
@@ -22,7 +22,7 @@ module.exports = {
 				Redis_PORT: 6379
             },
             env_production: {
-                PORT: 1200,
+                PORT: 4200,
 				NODE_ENV: 'production',
 				MySQLDB_HOST: 'content-auto-prod.cluster-cwvtgy0jxm2o.ap-northeast-2.rds.amazonaws.com',
 				MySQLDB_PORT: 3306,
