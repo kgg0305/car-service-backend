@@ -3,6 +3,7 @@ var router = express.Router();
 var connection = require('../database');
 var cors = require('cors');
 
+var app = express();
 app.use(cors());
 
 //   CREATE TABLE `tbl_brand` (
