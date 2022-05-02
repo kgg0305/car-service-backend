@@ -3,9 +3,6 @@ var router = express.Router();
 var connection = require('../database');
 var cors = require('cors');
 
-var app = express();
-app.use(cors());
-
 //   CREATE TABLE `tbl_brand` (
 //     `idx` int(11) NOT NULL AUTO_INCREMENT,
 //     `brand_name` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '브랜드 이름',
