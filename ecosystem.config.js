@@ -29,7 +29,7 @@ module.exports = {
 				MySQLDB_USER: 'auto_dev',
 				MySQLDB_PASSWORD: 'auto_dev12#',
 				MySQLDB_NAME: 'automobile_dev',
-				Redis_HOST: "localhost",
+				Redis_HOST: 'localhost',
 				Redis_PORT: 6379
             },
 			env_test: {
@@ -40,7 +40,7 @@ module.exports = {
 				MySQLDB_USER: 'auto_dev',
 				MySQLDB_PASSWORD: 'auto_dev12#',
 				MySQLDB_NAME: 'automobile_dev',
-				Redis_HOST: "localhost",
+				Redis_HOST: 'localhost',
 				Redis_PORT: 6379
             },
 		}
@@ -53,9 +53,9 @@ module.exports = {
 		ref  : 'origin/master',
 		repo : 'GIT_REPOSITORY',
 		path : 'DESTINATION_PATH',
-			'pre-deploy-local': '',
-			'post-deploy' : 'npm install && pm2 reload ecosystem.config.js --env production',
-			'pre-setup': ''
+		'pre-deploy-local': '',
+		'post-deploy' : 'npm install && pm2 reload ecosystem.config.js --env production',
+		'pre-setup': ''
 		}
 	}
 };
