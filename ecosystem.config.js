@@ -13,10 +13,10 @@ module.exports = {
 			env: {
 				PORT: 4200,
 				NODE_ENV: 'development',
-				MySQLDB_HOST: '127.0.0.1',
+				MySQLDB_HOST: 'content-auto-prod.cluster-cwvtgy0jxm2o.ap-northeast-2.rds.amazonaws.com',
 				MySQLDB_PORT: 3306,
-				MySQLDB_USER: 'root',
-				MySQLDB_PASSWORD: '',
+				MySQLDB_USER: 'auto_dev',
+				MySQLDB_PASSWORD: 'auto_dev12#',
 				MySQLDB_NAME: 'automobile_dev',
 				Redis_HOST: 'localhost',
 				Redis_PORT: 6379
@@ -24,10 +24,10 @@ module.exports = {
             env_production: {
                 PORT: 4200,
 				NODE_ENV: 'production',
-				MySQLDB_HOST: '127.0.0.1',
+				MySQLDB_HOST: 'content-auto-prod.cluster-cwvtgy0jxm2o.ap-northeast-2.rds.amazonaws.com',
 				MySQLDB_PORT: 3306,
-				MySQLDB_USER: 'root',
-				MySQLDB_PASSWORD: '',
+				MySQLDB_USER: 'auto_dev',
+				MySQLDB_PASSWORD: 'auto_dev12#',
 				MySQLDB_NAME: 'automobile_dev',
 				Redis_HOST: 'localhost',
 				Redis_PORT: 6379
