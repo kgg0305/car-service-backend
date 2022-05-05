@@ -16,6 +16,10 @@ var trimRouter = require('./routes/trim');
 var discountKindRouter = require('./routes/discountKind');
 var discountConditionRouter = require('./routes/discountCondition');
 var extraRouter = require('./routes/extra');
+var quotationRouter = require('./routes/quotation');
+var userRouter = require('./routes/user');
+var countRouter = require('./routes/count');
+var countSettingRouter = require('./routes/countSetting');
 var cors = require('cors');
 
 var app = express();
@@ -42,5 +46,9 @@ app.use('/trim', trimRouter);
 app.use('/discount-kind', discountKindRouter);
 app.use('/discount-condition', discountConditionRouter);
 app.use('/extra', extraRouter);
+app.use('/quotation', quotationRouter);
+app.use('/count', countRouter);
+app.use('/count-setting', countSettingRouter);
+app.use('/user', userRouter);
 
 module.exports = app;
