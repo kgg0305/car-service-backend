@@ -3,7 +3,7 @@ var multer = require('multer');
 
 var app = express();
 var router = express.Router();
-var brandUpload = multer({ dest: '/var/www/html/uploads/brand/'});
+var brandUpload = multer({ dest: process.env.Image_PATH + '/uploads/brand/'});
 
 router.post('/', brandUpload.array('files'), function(req, res, next) {    
     res.send(req.files);

@@ -5,16 +5,18 @@ var cors = require('cors');
 
 //   CREATE TABLE `tbl_user` (
 //     `idx` int(11) NOT NULL AUTO_INCREMENT,
-//     `type` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' COMMENT '구분=>0:사용자, 1:인원',
+//     `type_id` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' COMMENT '구분=>0:사용자, 1:인원',
 //     `group_id` int(11) DEFAULT NULL,
 //     `name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+//     `user_id` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
 //     `phone` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
 //     `email` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+//     `password` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
 //     PRIMARY KEY (`idx`)
 //   ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 const table_name = 'tbl_user';
-const table_fields = ['type', 'group_id', 'name', 'phone', 'email'];
+const table_fields = ['type_id', 'group_id', 'name', 'user_id', 'phone', 'email', 'password'];
 
 const group_table_name = 'tbl_model_group';
 
@@ -33,7 +35,10 @@ router.get('/option-list', function(req, res, next) {
 
 router.get('/:idx', function(req, res, next) {
     const idx = req.params.idx;
-    const query = 'SELECT * FROM ' + table_name + ' WHERE idx = ? LIMIT 0, 1';
+    const query = 'SELECT ' + table_name + '.*, ' + group_table_name + '.group_name ' + 
+                'FROM ' + table_name + ' ' +
+                'LEFT JOIN ' + group_table_name + ' ON ' + table_name + '.group_id = ' + group_table_name + '.idx ' + 
+                'WHERE ' + table_name + '.idx = ? LIMIT 0, 1';
 
     connection.query(query, [idx], (error, result, fields) => {
         if (error) {
@@ -81,6 +86,10 @@ router.post('/list/:offset?', function(req, res, next) {
     
     var where_array = [];
     
+    if(req.body.type_id) {
+        where_array.push('type_id = \'' + req.body.type_id + '\'');
+    }
+
     if(req.body.group_id) {
         where_array.push('group_id = ' + req.body.group_id);
     }
@@ -107,11 +116,11 @@ router.post('/list/:offset?', function(req, res, next) {
 });
 
 router.post('/check-name', function(req, res, next) {
-    const brand_name = req.body.brand_name;
-    const where_statement = 'brand_name = ?'
+    const name = req.body.name;
+    const where_statement = 'name = ?'
     const query = 'SELECT COUNT(*) as count FROM ' + table_name + ' WHERE ' + where_statement;
 
-    connection.query(query, [brand_name], (error, result, fields) => {
+    connection.query(query, [name], (error, result, fields) => {
         if (error) {
             console.error(error);
             res.status(500).send('Internal Server Error');
