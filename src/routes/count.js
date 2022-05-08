@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 var connection = require('../database');
-var cors = require('cors');
 
 // CREATE TABLE `tbl_count` (
 //   `idx` int(11) NOT NULL AUTO_INCREMENT,

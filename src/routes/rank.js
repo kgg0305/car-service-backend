@@ -2,21 +2,19 @@ var express = require('express');
 var router = express.Router();
 var connection = require('../database');
 
-//   CREATE TABLE `tbl_model_color` (
+//   CREATE TABLE `tbl_rank` (
 //     `idx` int(11) NOT NULL AUTO_INCREMENT,
-//     `model_id` int(11) DEFAULT NULL COMMENT '모델아이디',
-//     `color_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '모델/라인업 색상이름',
-//     `color_price` int(11) DEFAULT NULL COMMENT '모델/라인업 색상 가격',
+//     `type` int(11) DEFAULT NULL COMMENT '1: 자동차 인기순위, 2: 콘텐츠 인기순위, 3: 동영상 인기순위',
+//     `ids` text,
+//     `created_date` datetime DEFAULT NULL,
 //     PRIMARY KEY (`idx`)
-//   ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-const table_name = 'tbl_model_color';
-const table_fields = ['model_id', 'color_name', 'color_price'];
-
-const model_table_name = 'tbl_model';
+//   ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;  
+  
+const table_name = 'tbl_rank';
+const table_fields = ['type', 'ids', 'created_date'];
 
 router.get('/option-list', function(req, res, next) {
-    const query = 'SELECT idx as value, model_name as label FROM ??';
+    const query = 'SELECT idx as value, title as label FROM ??';
 
     connection.query(query, table_name, (error, result, fields) => {
         if (error) {
@@ -78,28 +76,13 @@ router.post('/list/:offset?', function(req, res, next) {
     
     var where_array = [];
     
-    if(req.body.brand_id) {
-        where_array.push(table_name + '.brand_id = ' + req.body.brand_id);
-    }
-
-    if(req.body.group_id) {
-        where_array.push(table_name + '.group_id = ' + req.body.group_id);
-    }
-
-    if(req.body.is_new) {
-        where_array.push(table_name + '.is_new = ' + req.body.is_new);
-    }
-
-    if(req.body.is_use) {
-        where_array.push(table_name + '.is_use = ' + req.body.is_use);
+    if(req.body.type) {
+        where_array.push('type = ' + req.body.type);
     }
     
     const where_statement = where_array.length != 0 ? 'AND ' + where_array.join(' AND ') : '';
 
-    const query =   'SELECT ' + table_name + '.*, ' + model_table_name + '.model_name ' + 
-                    'FROM ?? ' + 
-                    'LEFT JOIN ' + model_table_name + ' ON ' + table_name + '.model_id = ' + model_table_name + '.idx ' + 
-                    'WHERE ' + table_name + '.idx > 0 ' + where_statement + ' LIMIT ' + offset + ', 10';
+    const query = 'SELECT * FROM ?? WHERE idx > 0 ' + where_statement + ' LIMIT ' + offset + ', 10';
 
     connection.query(query, table_name, (error, result, fields) => {
         if (error) {
@@ -112,11 +95,11 @@ router.post('/list/:offset?', function(req, res, next) {
 });
 
 router.post('/check-name', function(req, res, next) {
-    const model_name = req.body.model_name;
-    const where_statement = 'model_name = ?'
+    const brand_name = req.body.brand_name;
+    const where_statement = 'brand_name = ?'
     const query = 'SELECT COUNT(*) as count FROM ' + table_name + ' WHERE ' + where_statement;
 
-    connection.query(query, [model_name], (error, result, fields) => {
+    connection.query(query, [brand_name], (error, result, fields) => {
         if (error) {
             console.error(error);
             res.status(500).send('Internal Server Error');

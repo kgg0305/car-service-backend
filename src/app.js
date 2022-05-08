@@ -8,6 +8,7 @@ var brandRouter = require('./routes/brand');
 var groupRouter = require('./routes/group');
 var carKindRouter = require('./routes/carKind');
 var modelRouter = require('./routes/model');
+var modelGalleryRouter = require('./routes/modelGallery');
 var modelLineupRouter = require('./routes/modelLineup');
 var modelColorRouter = require('./routes/modelColor');
 var modelTrimRouter = require('./routes/modelTrim');
@@ -20,6 +21,11 @@ var quotationRouter = require('./routes/quotation');
 var userRouter = require('./routes/user');
 var countRouter = require('./routes/count');
 var countSettingRouter = require('./routes/countSetting');
+var contentRouter = require('./routes/content');
+var recommendationRouter = require('./routes/recommendation');
+var photoRouter = require('./routes/photo');
+var rankRouter = require('./routes/rank');
+
 var cors = require('cors');
 
 var app = express();
@@ -38,6 +44,7 @@ app.use('/brand', brandRouter);
 app.use('/group', groupRouter);
 app.use('/car-kind', carKindRouter);
 app.use('/model', modelRouter);
+app.use('/model-gallery', modelGalleryRouter);
 app.use('/model-lineup', modelLineupRouter);
 app.use('/model-color', modelColorRouter);
 app.use('/model-trim', modelTrimRouter);
@@ -50,5 +57,9 @@ app.use('/quotation', quotationRouter);
 app.use('/count', countRouter);
 app.use('/count-setting', countSettingRouter);
 app.use('/user', userRouter);
+app.use('/content', contentRouter);
+app.use('/recommendation', recommendationRouter);
+app.use('/photo', photoRouter);
+app.use('/rank', rankRouter);
 
 module.exports = app;

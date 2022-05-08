@@ -99,7 +99,7 @@ router.post('/list/:offset?', function(req, res, next) {
 
     const query =   'SELECT ' + table_name + '.*, ' + model_table_name + '.model_name ' + 
                     'FROM ?? ' + 
-                    'LEFT JOIN ' + model_table_name + ' ON ' + table_name + '.brand_id = ' + model_table_name + '.idx ' + 
+                    'LEFT JOIN ' + model_table_name + ' ON ' + table_name + '.model_id = ' + model_table_name + '.idx ' + 
                     'WHERE ' + table_name + '.idx > 0 ' + where_statement + ' LIMIT ' + offset + ', 10';
 
     connection.query(query, table_name, (error, result, fields) => {

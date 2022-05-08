@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 var connection = require('../database');
-var cors = require('cors');
 
 //   CREATE TABLE `tbl_quotation` (
 //     `idx` int(11) NOT NULL AUTO_INCREMENT,
@@ -25,7 +24,6 @@ var cors = require('cors');
 //     `assign_to` int(11) DEFAULT NULL,
 //     PRIMARY KEY (`idx`)
 //   ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-  
 
 const table_name = 'tbl_quotation';
 const table_fields = [
