@@ -26,7 +26,7 @@ const group_table_name = 'tbl_model_group';
 const model_table_name = 'tbl_model';
 
 router.get('/option-list', function(req, res, next) {
-    const query = 'SELECT idx as value, lineup_name as label FROM ??';
+    const query = 'SELECT idx as value, lineup_name as label, brand_id, group_id, model_id FROM ??';
 
     connection.query(query, table_name, (error, result, fields) => {
         if (error) {
