@@ -19,13 +19,14 @@ var connection = require('../database');
 //     `picture_6` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '사진06',
 //     `picture_7` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '사진07',
 //     `picture_8` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '사진08',
+//     `created_date` datetime NOT NULL COMMENT '등록일',
 //     PRIMARY KEY (`idx`)
 //   ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 const table_name = 'tbl_model';
 const table_fields = [
     'group_id', 'brand_id', 'model_name', 'is_new', 'release_date', 'sequence', 'is_use', 
-    'picture_1', 'picture_2', 'picture_3', 'picture_4', 'picture_5', 'picture_6', 'picture_7', 'picture_8'
+    'picture_1', 'picture_2', 'picture_3', 'picture_4', 'picture_5', 'picture_6', 'picture_7', 'picture_8', 'created_date'
 ];
 
 const brand_table_name = 'tbl_brand';

@@ -6,13 +6,12 @@ var connection = require('../database');
 //     `idx` int(11) NOT NULL AUTO_INCREMENT,
 //     `publish_date` date DEFAULT NULL,
 //     `content_ids` text,
-//     `status` char(1) DEFAULT NULL,
 //     PRIMARY KEY (`idx`)
 //   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
   
   
 const table_name = 'tbl_recommendation';
-const table_fields = ['publish_date', 'content_ids', 'status'];
+const table_fields = ['publish_date', 'content_ids'];
 
 router.get('/option-list', function(req, res, next) {
     const query = 'SELECT idx as value, title as label FROM ??';
