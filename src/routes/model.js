@@ -11,6 +11,7 @@ var connection = require('../database');
 //     `release_date` date NOT NULL COMMENT '출시일',
 //     `sequence` int(11) NOT NULL COMMENT '순서',
 //     `is_use` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '사용여부=>0:사용, 1:미사용',
+//     `discount_condition_ids` text,
 //     `picture_1` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '사진01',
 //     `picture_2` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '사진02',
 //     `picture_3` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '사진03',
@@ -19,14 +20,14 @@ var connection = require('../database');
 //     `picture_6` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '사진06',
 //     `picture_7` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '사진07',
 //     `picture_8` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '사진08',
-//     `created_date` datetime NOT NULL COMMENT '등록일',
+//     `created_date` datetime DEFAULT NULL COMMENT '등록일',
 //     PRIMARY KEY (`idx`)
-//   ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+//   ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
 const table_name = 'tbl_model';
 const table_fields = [
     'group_id', 'brand_id', 'model_name', 'is_new', 'release_date', 'sequence', 'is_use', 
-    'picture_1', 'picture_2', 'picture_3', 'picture_4', 'picture_5', 'picture_6', 'picture_7', 'picture_8', 'created_date'
+    'picture_1', 'picture_2', 'picture_3', 'picture_4', 'picture_5', 'picture_6', 'picture_7', 'picture_8', 'created_date', 'discount_condition_ids'
 ];
 
 const brand_table_name = 'tbl_brand';
@@ -117,7 +118,7 @@ router.post('/list/:offset?', function(req, res, next) {
     
     const where_statement = where_array.length != 0 ? 'AND ' + where_array.join(' AND ') : '';
 
-    const query =   'SELECT ' + table_name + '.*, ' + brand_table_name + '.brand_name, ' + model_group_table_name + '.group_name ' + 
+    const query =   'SELECT ' + table_name + '.*, ' + brand_table_name + '.brand_name, ' + brand_table_name + '.is_income, ' + model_group_table_name + '.group_name ' + 
                     'FROM ?? ' + 
                     'LEFT JOIN ' + brand_table_name + ' ON ' + table_name + '.brand_id = ' + brand_table_name + '.idx ' + 
                     'LEFT JOIN ' + model_group_table_name + ' ON ' + table_name + '.group_id = ' + model_group_table_name + '.idx ' + 

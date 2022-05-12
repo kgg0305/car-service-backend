@@ -4,8 +4,8 @@ var connection = require('../database');
 
 //   CREATE TABLE `tbl_user` (
 //     `idx` int(11) NOT NULL AUTO_INCREMENT,
-//     `type_id` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' COMMENT '구분=>0:사용자, 1:인원',
-//     `group_id` int(11) DEFAULT NULL,
+//     `type_id` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' COMMENT '구분=>0:콘텐츠, 1:자동차',
+//     `group_id` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
 //     `name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
 //     `user_id` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
 //     `phone` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,

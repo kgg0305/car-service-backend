@@ -2,24 +2,21 @@ var express = require('express');
 var router = express.Router();
 var connection = require('../database');
 
-//   CREATE TABLE `tbl_discount_kind` (
+//   CREATE TABLE `tbl_trim_specification` (
 //     `idx` int(11) NOT NULL AUTO_INCREMENT,
-//     `brand_id` int(11) DEFAULT NULL COMMENT '브랜드 아이디',
-//     `kind_name` varchar(18) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '할인 종류 이름',
-//     `kind_detail` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '할인 종류 세부내용',
-//     `s_date` date DEFAULT NULL COMMENT '시작일',
-//     `e_date` date DEFAULT NULL COMMENT '종료일',
+//     `trim_id` int(11) DEFAULT NULL COMMENT '트림아이디',
+//     `specification_id` char(1) DEFAULT NULL COMMENT '사양',
+//     `detail` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '세부내용',
 //     PRIMARY KEY (`idx`)
-//   ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+//   ) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
 
-const table_name = 'tbl_discount_kind';
-const table_fields = ['brand_id', 'kind_name', 'kind_detail', 's_date', 'e_date'];
+const table_name = 'tbl_trim_specification';
+const table_fields = ['trim_id', 'specification_id', 'detail'];
 
-const brand_table_name = 'tbl_brand';
-const discount_condition_table_name = 'tbl_discount_condition';
+const trim_table_name = 'tbl_trim';
 
 router.get('/option-list', function(req, res, next) {
-    const query = 'SELECT idx as value, kind_name as label, brand_id FROM ??';
+    const query = 'SELECT idx as value, model_name as label FROM ??';
 
     connection.query(query, table_name, (error, result, fields) => {
         if (error) {
@@ -81,30 +78,17 @@ router.post('/list/:offset?', function(req, res, next) {
     
     var where_array = [];
     
-    if(req.body.brand_id) {
-        where_array.push(table_name + '.brand_id = ' + req.body.brand_id);
-    }
-
-    if(req.body.idx) {
-        where_array.push(table_name + '.idx = ' + req.body.idx);
-    }
-
-    if(req.body.s_date) {
-        where_array.push(table_name + '.s_date >= \'' + req.body.s_date + '\'');
-    }
-
-    if(req.body.e_date) {
-        where_array.push(table_name + '.e_date <= \'' + req.body.e_date + '\'');
+    if(req.body.trim_id) {
+        where_array.push(table_name + '.trim_id = ' + req.body.trim_id);
     }
     
     const where_statement = where_array.length != 0 ? 'AND ' + where_array.join(' AND ') : '';
 
-    const query =   'SELECT ' + table_name + '.*, ' + brand_table_name + '.brand_name, ' + discount_condition_table_name + '.condition_name, ' + discount_condition_table_name + '.discount_price ' +
+    const query =   'SELECT ' + table_name + '.*, ' + trim_table_name + '.trim_name ' + 
                     'FROM ?? ' + 
-                    'LEFT JOIN ' + brand_table_name + ' ON ' + table_name + '.brand_id = ' + brand_table_name + '.idx ' + 
-                    'LEFT JOIN ' + discount_condition_table_name + ' ON ' + table_name + '.idx = ' + discount_condition_table_name + '.discount_kind_id ' + 
+                    'LEFT JOIN ' + trim_table_name + ' ON ' + table_name + '.trim_id = ' + trim_table_name + '.idx ' + 
                     'WHERE ' + table_name + '.idx > 0 ' + where_statement + ' LIMIT ' + offset + ', 10';
-console.log(query);
+
     connection.query(query, table_name, (error, result, fields) => {
         if (error) {
             console.error(error);
@@ -116,11 +100,11 @@ console.log(query);
 });
 
 router.post('/check-name', function(req, res, next) {
-    const kind_name = req.body.kind_name;
-    const where_statement = 'kind_name = ?'
+    const model_name = req.body.model_name;
+    const where_statement = 'model_name = ?'
     const query = 'SELECT COUNT(*) as count FROM ' + table_name + ' WHERE ' + where_statement;
 
-    connection.query(query, [kind_name], (error, result, fields) => {
+    connection.query(query, [model_name], (error, result, fields) => {
         if (error) {
             console.error(error);
             res.status(500).send('Internal Server Error');

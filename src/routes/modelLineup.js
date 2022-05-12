@@ -5,14 +5,14 @@ var connection = require('../database');
 //   CREATE TABLE `tbl_model_lineup` (
 //     `idx` int(11) NOT NULL AUTO_INCREMENT,
 //     `model_id` int(11) DEFAULT NULL COMMENT '모델아이디',
-//     `lineup_name` varchar(18) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '모델/라이업 공통 옵션(튜닝/액세서리) 옵션 이름',
-//     `lineup_price` int(11) DEFAULT NULL COMMENT '모델/라이업 공통 옵션(튜닝/액세서리) 옵션 가격',
-//     `lineup_detail` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '모델/라이업 공통 옵션(튜닝/액세서리) 세부내용',
+//     `name` varchar(18) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '모델/라이업 공통 옵션(튜닝/액세서리) 옵션 이름',
+//     `price` int(11) DEFAULT NULL COMMENT '모델/라이업 공통 옵션(튜닝/액세서리) 옵션 가격',
+//     `detail` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '모델/라이업 공통 옵션(튜닝/액세서리) 세부내용',
 //     PRIMARY KEY (`idx`)
 //   ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 const table_name = 'tbl_model_lineup';
-const table_fields = ['model_id', 'lineup_name', 'lineup_price', 'lineup_detail'];
+const table_fields = ['model_id', 'name', 'price', 'detail'];
 
 const model_table_name = 'tbl_model';
 
@@ -79,20 +79,8 @@ router.post('/list/:offset?', function(req, res, next) {
     
     var where_array = [];
     
-    if(req.body.brand_id) {
-        where_array.push(table_name + '.brand_id = ' + req.body.brand_id);
-    }
-
-    if(req.body.group_id) {
-        where_array.push(table_name + '.group_id = ' + req.body.group_id);
-    }
-
-    if(req.body.is_new) {
-        where_array.push(table_name + '.is_new = ' + req.body.is_new);
-    }
-
-    if(req.body.is_use) {
-        where_array.push(table_name + '.is_use = ' + req.body.is_use);
+    if(req.body.model_id) {
+        where_array.push(table_name + '.model_id = ' + req.body.model_id);
     }
     
     const where_statement = where_array.length != 0 ? 'AND ' + where_array.join(' AND ') : '';

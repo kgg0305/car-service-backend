@@ -4,22 +4,24 @@ var connection = require('../database');
 
 //   CREATE TABLE `tbl_lineup` (
 //     `idx` int(11) NOT NULL AUTO_INCREMENT,
-//     `brand_id` int(11) DEFAULT NULL COMMENT '브랜드아이디',
-//     `group_id` int(11) DEFAULT NULL COMMENT '그룹아이디',
+//     `brand_id` int(11) DEFAULT NULL,
+//     `group_id` int(11) DEFAULT NULL,
 //     `model_id` int(11) DEFAULT NULL COMMENT '모델아이디',
-//     `model_lineup_ids` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '모델/라이업 공통옵션 아이디=>코마로 구분',
-//     `model_color_ids` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '모델/라이업 색상 아이디=>코마로 구분',
+//     `model_lineup_ids` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT '모델/라이업 공통옵션 아이디=>코마로 구분',
+//     `model_color_ids` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT '모델/라이업 색상 아이디=>코마로 구분',
 //     `lineup_name` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '라인업명',
 //     `fule_kind` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '연료=>0:휘발유, 1:경우...',
 //     `year_type` int(11) DEFAULT NULL COMMENT '연식',
 //     `is_use` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '라인업 사용여부=>0:사용, 1:미사용',
-//     `is_use_lineup` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '모델/라인업 공통 옵션 사용여부=> 콤마로 구분 0,1,1',
-//     `is_use_color` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '모델/라인업 색상 사용여부=> 콤마로 구분 0,1,1',
+//     `created_date` datetime DEFAULT NULL COMMENT '등록일',
 //     PRIMARY KEY (`idx`)
-//   ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+//   ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 const table_name = 'tbl_lineup';
-const table_fields = ['brand_id', 'group_id', 'model_id', 'model_lineup_ids', 'model_color_ids', 'lineup_name', 'fule_kind', 'year_type', 'is_use', 'is_use_lineup', 'is_use_color'];
+const table_fields = [
+    'brand_id', 'group_id', 'model_id', 'model_lineup_ids', 'model_color_ids', 'lineup_name', 
+    'fule_kind', 'year_type', 'is_use', 'created_date'
+];
 
 const brand_table_name = 'tbl_brand';
 const group_table_name = 'tbl_model_group';

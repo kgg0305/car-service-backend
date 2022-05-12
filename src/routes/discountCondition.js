@@ -84,9 +84,7 @@ router.post('/list/:offset?', function(req, res, next) {
     
     const where_statement = where_array.length != 0 ? 'AND ' + where_array.join(' AND ') : '';
 
-    const query =   'SELECT ' + table_name + '.* '
-                    'FROM ?? ' + 
-                    'WHERE ' + table_name + '.idx > 0 ' + where_statement + ' LIMIT ' + offset + ', 10';
+    const query = 'SELECT * FROM ?? WHERE idx > 0 ' + where_statement + ' LIMIT ' + offset + ', 10';
 
     connection.query(query, table_name, (error, result, fields) => {
         if (error) {

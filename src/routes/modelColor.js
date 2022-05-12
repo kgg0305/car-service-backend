@@ -5,13 +5,13 @@ var connection = require('../database');
 //   CREATE TABLE `tbl_model_color` (
 //     `idx` int(11) NOT NULL AUTO_INCREMENT,
 //     `model_id` int(11) DEFAULT NULL COMMENT '모델아이디',
-//     `color_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '모델/라인업 색상이름',
-//     `color_price` int(11) DEFAULT NULL COMMENT '모델/라인업 색상 가격',
+//     `name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '모델/라인업 색상이름',
+//     `price` int(11) DEFAULT NULL COMMENT '모델/라인업 색상 가격',
 //     PRIMARY KEY (`idx`)
 //   ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 const table_name = 'tbl_model_color';
-const table_fields = ['model_id', 'color_name', 'color_price'];
+const table_fields = ['model_id', 'name', 'price'];
 
 const model_table_name = 'tbl_model';
 
@@ -78,20 +78,8 @@ router.post('/list/:offset?', function(req, res, next) {
     
     var where_array = [];
     
-    if(req.body.brand_id) {
-        where_array.push(table_name + '.brand_id = ' + req.body.brand_id);
-    }
-
-    if(req.body.group_id) {
-        where_array.push(table_name + '.group_id = ' + req.body.group_id);
-    }
-
-    if(req.body.is_new) {
-        where_array.push(table_name + '.is_new = ' + req.body.is_new);
-    }
-
-    if(req.body.is_use) {
-        where_array.push(table_name + '.is_use = ' + req.body.is_use);
+    if(req.body.model_id) {
+        where_array.push(table_name + '.model_id = ' + req.body.model_id);
     }
     
     const where_statement = where_array.length != 0 ? 'AND ' + where_array.join(' AND ') : '';

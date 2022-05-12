@@ -11,12 +11,13 @@ var connection = require('../database');
 //     `trim_name` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '라인업명',
 //     `gearbox_type` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '변속기',
 //     `price` int(11) DEFAULT NULL COMMENT '가격',
+//     `model_trim_ids` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT '모델/트림 공통옵션 아이디=>코마로 구분',
 //     `is_use` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '라인업 사용여부=>0:사용, 1:미사용',
 //     PRIMARY KEY (`idx`)
 //   ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 
 const table_name = 'tbl_trim';
-const table_fields = ['brand_id', 'group_id', 'model_id', 'lineup_id', 'trim_name', 'gearbox_type', 'price', 'is_use'];
+const table_fields = ['brand_id', 'group_id', 'model_id', 'lineup_id', 'trim_name', 'gearbox_type', 'price', 'model_trim_ids', 'is_use'];
 
 const brand_table_name = 'tbl_brand';
 const group_table_name = 'tbl_model_group';
