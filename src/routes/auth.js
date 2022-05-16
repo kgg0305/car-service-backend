@@ -1,30 +1,26 @@
 var express = require('express');
-const excel = require("exceljs");
 var router = express.Router();
 var connection = require('../database');
 
-//   CREATE TABLE `tbl_extra` (
+//   CREATE TABLE `tbl_user` (
 //     `idx` int(11) NOT NULL AUTO_INCREMENT,
-//     `brand_id` int(11) DEFAULT NULL,
-//     `group_id` int(11) DEFAULT NULL,
-//     `model_id` int(11) DEFAULT NULL,
-//     `region` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-//     `condition` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-//     `fee` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-//     `discount` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-//     `transfer` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+//     `type_id` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' COMMENT '구분=>0:콘텐츠, 1:자동차',
+//     `group_id` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
+//     `name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+//     `user_id` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+//     `phone` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+//     `email` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+//     `password` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
 //     PRIMARY KEY (`idx`)
 //   ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-const table_name = 'tbl_extra';
-const table_fields = ['brand_id', 'group_id', 'model_id', 'region', 'condition', 'fee', 'discount', 'transfer'];
+const table_name = 'tbl_user';
+const table_fields = ['type_id', 'group_id', 'name', 'user_id', 'phone', 'email', 'password'];
 
-const brand_table_name = 'tbl_brand';
 const group_table_name = 'tbl_model_group';
-const model_table_name = 'tbl_model';
 
 router.get('/option-list', function(req, res, next) {
-    const query = 'SELECT idx as value, region as label FROM ??';
+    const query = 'SELECT idx as value, name as label FROM ??';
 
     connection.query(query, table_name, (error, result, fields) => {
         if (error) {
@@ -38,7 +34,10 @@ router.get('/option-list', function(req, res, next) {
 
 router.get('/:idx', function(req, res, next) {
     const idx = req.params.idx;
-    const query = 'SELECT * FROM ' + table_name + ' WHERE idx = ? LIMIT 0, 1';
+    const query = 'SELECT ' + table_name + '.*, ' + group_table_name + '.group_name ' + 
+                'FROM ' + table_name + ' ' +
+                'LEFT JOIN ' + group_table_name + ' ON ' + table_name + '.group_id = ' + group_table_name + '.idx ' + 
+                'WHERE ' + table_name + '.idx = ? LIMIT 0, 1';
 
     connection.query(query, [idx], (error, result, fields) => {
         if (error) {
@@ -86,17 +85,23 @@ router.post('/list/:offset?', function(req, res, next) {
     
     var where_array = [];
     
-    if(req.body.model_id) {
-        where_array.push(table_name + '.model_id = ' + req.body.model_id);
+    if(req.body.type_id) {
+        where_array.push('type_id = \'' + req.body.type_id + '\'');
+    }
+
+    if(req.body.group_id) {
+        where_array.push('group_id = ' + req.body.group_id);
+    }
+
+    if(req.body.name) {
+        where_array.push('name = \'' + req.body.name + '\'');
     }
     
     const where_statement = where_array.length != 0 ? 'AND ' + where_array.join(' AND ') : '';
 
-    const query =   'SELECT ' + table_name + '.*, ' + brand_table_name + '.brand_name, ' + group_table_name + '.group_name, ' + model_table_name + '.model_name ' + 
+    const query =   'SELECT ' + table_name + '.*, ' + group_table_name + '.group_name ' + 
                     'FROM ?? ' + 
-                    'LEFT JOIN ' + brand_table_name + ' ON ' + table_name + '.brand_id = ' + brand_table_name + '.idx ' + 
                     'LEFT JOIN ' + group_table_name + ' ON ' + table_name + '.group_id = ' + group_table_name + '.idx ' + 
-                    'LEFT JOIN ' + model_table_name + ' ON ' + table_name + '.model_id = ' + model_table_name + '.idx ' + 
                     'WHERE ' + table_name + '.idx > 0 ' + where_statement + ' LIMIT ' + offset + ', 10';
 
     connection.query(query, table_name, (error, result, fields) => {
@@ -109,54 +114,46 @@ router.post('/list/:offset?', function(req, res, next) {
     });
 });
 
-router.post('/check-name', function(req, res, next) {
-    const region = req.body.region;
-    const where_statement = 'region = ?'
-    const query = 'SELECT COUNT(*) as count FROM ' + table_name + ' WHERE ' + where_statement;
-
-    connection.query(query, [region], (error, result, fields) => {
-        if (error) {
-            console.error(error);
-            res.status(500).send('Internal Server Error');
-        }
-        
-        res.send(result[0].count == 0 ? { exist: false } : { exist: true });
-    });
-});
-
-router.post('/download', function(req, res, next) {
-    const query = 'SELECT * FROM ??';
+router.post('/login', function(req, res, next) {
+    const query = 'SELECT * FROM ?? WHERE user_id = \'' + req.body.user_id + '\' LIMIT 0, 1';
 
     connection.query(query, table_name, (error, result, fields) => {
         if (error) {
             console.error(error);
             res.status(500).send('Internal Server Error');
         }
+        
+        if(result.length == 0) {
+            res.send({
+                status: "no-user"
+            });
+        } else {
+            if(result[0].password === req.body.password) {
+                res.send({
+                    status: "successful",
+                    token: result[0]
+                });
+            } else {
+                res.send({
+                    status: "no-password"
+                });
+            }
+        }
+    });
+});
 
-        let work_book = new excel.Workbook();
-        let work_sheet = work_book.addWorksheet('취득세');
-        work_sheet.columns = [
-            { header: 'ID', key: 'idx', width: 15},
-            { header: '모델ID', key: 'brand_id', width: 15},
-            { header: '배기량', key: 'condition', width: 15},
-            { header: '등록지역', key: 'region', width: 15},
-            { header: '취득세', key: 'fee', width: 15},
-            { header: '채권할인', key: 'discount', width: 15},
-            { header: '탁송', key: 'transfer', width: 15}
-        ];
-        work_sheet.addRows(result);
-        res.setHeader(
-            'Content-Type',
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        );
-        res.setHeader(
-            'Content-Disposition',
-            'attachment; filename=' + 'extra.xlsx'
-        );
+router.post('/check-name', function(req, res, next) {
+    const name = req.body.name;
+    const where_statement = 'name = ?'
+    const query = 'SELECT COUNT(*) as count FROM ' + table_name + ' WHERE ' + where_statement;
 
-        work_book.xlsx.write(res).then(function () {
-            res.send();
-        });
+    connection.query(query, [name], (error, result, fields) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send('Internal Server Error');
+        }
+        
+        res.send(result[0].count == 0 ? { exist: false } : { exist: true });
     });
 });
 

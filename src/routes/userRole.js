@@ -1,30 +1,22 @@
 var express = require('express');
-const excel = require("exceljs");
 var router = express.Router();
 var connection = require('../database');
 
-//   CREATE TABLE `tbl_extra` (
+//   CREATE TABLE `tbl_user_role` (
 //     `idx` int(11) NOT NULL AUTO_INCREMENT,
-//     `brand_id` int(11) DEFAULT NULL,
-//     `group_id` int(11) DEFAULT NULL,
-//     `model_id` int(11) DEFAULT NULL,
-//     `region` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-//     `condition` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-//     `fee` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-//     `discount` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-//     `transfer` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+//     `name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+//     `user_id` int(11) DEFAULT NULL COMMENT '사용자아이디',
+//     `status` varchar(50) DEFAULT NULL COMMENT '권한',
 //     PRIMARY KEY (`idx`)
-//   ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+//   ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
-const table_name = 'tbl_extra';
-const table_fields = ['brand_id', 'group_id', 'model_id', 'region', 'condition', 'fee', 'discount', 'transfer'];
+const table_name = 'tbl_user_role';
+const table_fields = ['name', 'user_id', 'status'];
 
-const brand_table_name = 'tbl_brand';
-const group_table_name = 'tbl_model_group';
-const model_table_name = 'tbl_model';
+const user_table_name = 'tbl_user';
 
 router.get('/option-list', function(req, res, next) {
-    const query = 'SELECT idx as value, region as label FROM ??';
+    const query = 'SELECT idx as value, name as label FROM ??';
 
     connection.query(query, table_name, (error, result, fields) => {
         if (error) {
@@ -38,7 +30,10 @@ router.get('/option-list', function(req, res, next) {
 
 router.get('/:idx', function(req, res, next) {
     const idx = req.params.idx;
-    const query = 'SELECT * FROM ' + table_name + ' WHERE idx = ? LIMIT 0, 1';
+    const query = 'SELECT ' + table_name + '.*, ' + user_table_name + '.name ' + 
+                'FROM ' + table_name + ' ' +
+                'LEFT JOIN ' + user_table_name + ' ON ' + table_name + '.group_id = ' + user_table_name + '.idx ' + 
+                'WHERE ' + table_name + '.idx = ? LIMIT 0, 1';
 
     connection.query(query, [idx], (error, result, fields) => {
         if (error) {
@@ -86,17 +81,23 @@ router.post('/list/:offset?', function(req, res, next) {
     
     var where_array = [];
     
-    if(req.body.model_id) {
-        where_array.push(table_name + '.model_id = ' + req.body.model_id);
+    if(req.body.name) {
+        where_array.push('name = \'' + req.body.name + '\'');
+    }
+
+    if(req.body.user_id) {
+        where_array.push('user_id = ' + req.body.user_id);
+    }
+
+    if(req.body.status) {
+        where_array.push('status = \'' + req.body.status + '\'');
     }
     
     const where_statement = where_array.length != 0 ? 'AND ' + where_array.join(' AND ') : '';
 
-    const query =   'SELECT ' + table_name + '.*, ' + brand_table_name + '.brand_name, ' + group_table_name + '.group_name, ' + model_table_name + '.model_name ' + 
+    const query =   'SELECT ' + table_name + '.*, ' + user_table_name + '.name as user_name ' + 
                     'FROM ?? ' + 
-                    'LEFT JOIN ' + brand_table_name + ' ON ' + table_name + '.brand_id = ' + brand_table_name + '.idx ' + 
-                    'LEFT JOIN ' + group_table_name + ' ON ' + table_name + '.group_id = ' + group_table_name + '.idx ' + 
-                    'LEFT JOIN ' + model_table_name + ' ON ' + table_name + '.model_id = ' + model_table_name + '.idx ' + 
+                    'LEFT JOIN ' + user_table_name + ' ON ' + table_name + '.user_id = ' + user_table_name + '.idx ' + 
                     'WHERE ' + table_name + '.idx > 0 ' + where_statement + ' LIMIT ' + offset + ', 10';
 
     connection.query(query, table_name, (error, result, fields) => {
@@ -110,53 +111,17 @@ router.post('/list/:offset?', function(req, res, next) {
 });
 
 router.post('/check-name', function(req, res, next) {
-    const region = req.body.region;
-    const where_statement = 'region = ?'
+    const name = req.body.name;
+    const where_statement = 'name = ?'
     const query = 'SELECT COUNT(*) as count FROM ' + table_name + ' WHERE ' + where_statement;
 
-    connection.query(query, [region], (error, result, fields) => {
+    connection.query(query, [name], (error, result, fields) => {
         if (error) {
             console.error(error);
             res.status(500).send('Internal Server Error');
         }
         
         res.send(result[0].count == 0 ? { exist: false } : { exist: true });
-    });
-});
-
-router.post('/download', function(req, res, next) {
-    const query = 'SELECT * FROM ??';
-
-    connection.query(query, table_name, (error, result, fields) => {
-        if (error) {
-            console.error(error);
-            res.status(500).send('Internal Server Error');
-        }
-
-        let work_book = new excel.Workbook();
-        let work_sheet = work_book.addWorksheet('취득세');
-        work_sheet.columns = [
-            { header: 'ID', key: 'idx', width: 15},
-            { header: '모델ID', key: 'brand_id', width: 15},
-            { header: '배기량', key: 'condition', width: 15},
-            { header: '등록지역', key: 'region', width: 15},
-            { header: '취득세', key: 'fee', width: 15},
-            { header: '채권할인', key: 'discount', width: 15},
-            { header: '탁송', key: 'transfer', width: 15}
-        ];
-        work_sheet.addRows(result);
-        res.setHeader(
-            'Content-Type',
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        );
-        res.setHeader(
-            'Content-Disposition',
-            'attachment; filename=' + 'extra.xlsx'
-        );
-
-        work_book.xlsx.write(res).then(function () {
-            res.send();
-        });
     });
 });
 

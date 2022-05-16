@@ -1,4 +1,5 @@
 var express = require('express');
+const excel = require("exceljs");
 var router = express.Router();
 var connection = require('../database');
 
@@ -28,7 +29,7 @@ var connection = require('../database');
 const table_name = 'tbl_quotation';
 const table_fields = [
     'purchase_path', 'purchase_method', 'reg_date', 'client_name', 'client_phone', 'brand_id', 'model_id', 'lineup_id', 'car_kind_id', 
-    'trim_id', 'is_business', 'is_contract', 'contract_date', 'is_release', 'release_date', 'is_close', 'note'
+    'trim_id', 'is_business', 'is_contract', 'contract_date', 'is_release', 'release_date', 'is_close', 'note', 'assign_to'
 ];
 
 const brand_table_name = 'tbl_brand';
@@ -252,6 +253,44 @@ router.post('/count', function(req, res, next) {
         }
         
         res.send(result ? result[0] : null);
+    });
+});
+
+router.post('/download', function(req, res, next) {
+    const query = 'SELECT * FROM ??';
+
+    connection.query(query, table_name, (error, result, fields) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send('Internal Server Error');
+        }
+
+        let work_book = new excel.Workbook();
+        let work_sheet = work_book.addWorksheet('견적신청');
+        work_sheet.columns = [
+            { header: 'ID', key: 'idx', width: 15},
+            { header: '유입경로', key: 'purchase_path', width: 15},
+            { header: '구입방법', key: 'purchase_method', width: 15},
+            { header: '이름', key: 'client_name', width: 15},
+            { header: '연락처', key: 'client_phone', width: 15},
+            { header: '브랜드', key: 'brand_id', width: 15},
+            { header: '차종', key: 'car_kind_id', width: 15},
+            { header: '지점', key: 'assign_to', width: 15},
+            { header: '인원', key: 'assign_to', width: 15}
+        ];
+        work_sheet.addRows(result);
+        res.setHeader(
+            'Content-Type',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        );
+        res.setHeader(
+            'Content-Disposition',
+            'attachment; filename=' + 'quotation.xlsx'
+        );
+
+        work_book.xlsx.write(res).then(function () {
+            res.send();
+        });
     });
 });
 

@@ -20,12 +20,14 @@ var discountConditionRouter = require('./routes/discountCondition');
 var extraRouter = require('./routes/extra');
 var quotationRouter = require('./routes/quotation');
 var userRouter = require('./routes/user');
+var userRoleRouter = require('./routes/userRole');
 var countRouter = require('./routes/count');
 var countSettingRouter = require('./routes/countSetting');
 var contentRouter = require('./routes/content');
 var recommendationRouter = require('./routes/recommendation');
 var photoRouter = require('./routes/photo');
 var rankRouter = require('./routes/rank');
+var authRouter = require('./routes/auth');
 
 var cors = require('cors');
 
@@ -59,9 +61,11 @@ app.use('/quotation', quotationRouter);
 app.use('/count', countRouter);
 app.use('/count-setting', countSettingRouter);
 app.use('/user', userRouter);
+app.use('/user-role', userRoleRouter);
 app.use('/content', contentRouter);
 app.use('/recommendation', recommendationRouter);
 app.use('/photo', photoRouter);
 app.use('/rank', rankRouter);
+app.use('/auth', authRouter);
 
 module.exports = app;
