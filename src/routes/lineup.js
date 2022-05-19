@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var connection = require('../database');
 
-//   CREATE TABLE `tbl_lineup` (
+// CREATE TABLE `tbl_lineup` (
 //     `idx` int(11) NOT NULL AUTO_INCREMENT,
 //     `brand_id` int(11) DEFAULT NULL,
 //     `group_id` int(11) DEFAULT NULL,
@@ -13,18 +13,23 @@ var connection = require('../database');
 //     `fule_kind` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '연료=>0:휘발유, 1:경우...',
 //     `year_type` int(11) DEFAULT NULL COMMENT '연식',
 //     `is_use` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '라인업 사용여부=>0:사용, 1:미사용',
-//     `created_date` datetime DEFAULT NULL COMMENT '등록일',
+//     `created_at` datetime DEFAULT NULL,
+//     `created_by` int(11) DEFAULT NULL,
+//     `updated_at` datetime DEFAULT NULL,
+//     `updated_by` int(11) DEFAULT NULL,
+//     `deleted_at` datetime DEFAULT NULL,
+//     `deleted_by` int(11) DEFAULT NULL,
+//     `is_deleted` tinyint(1) DEFAULT NULL,
 //     PRIMARY KEY (`idx`)
-//   ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+//   ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;  
 
 const table_name = 'tbl_lineup';
 const table_fields = [
-    'brand_id', 'group_id', 'model_id', 'model_lineup_ids', 'model_color_ids', 'lineup_name', 
-    'fule_kind', 'year_type', 'is_use', 'created_date'
+    'brand_id', 'group_id', 'model_id', 'model_lineup_ids', 'model_color_ids', 'lineup_name', 'fule_kind', 'year_type', 'is_use', 'created_at', 'created_by', 'updated_at', 'updated_by', 'deleted_at', 'deleted_by', 'is_deleted'
 ];
 
 const brand_table_name = 'tbl_brand';
-const group_table_name = 'tbl_model_group';
+const group_table_name = 'tbl_group';
 const model_table_name = 'tbl_model';
 
 router.get('/option-list', function(req, res, next) {
@@ -90,6 +95,14 @@ router.post('/list/:offset?', function(req, res, next) {
     
     var where_array = [];
     
+    if(req.body.brand_id) {
+        where_array.push(table_name + '.brand_id = ' + req.body.brand_id);
+    }
+
+    if(req.body.group_id) {
+        where_array.push(table_name + '.group_id = ' + req.body.group_id);
+    }
+
     if(req.body.model_id) {
         where_array.push(table_name + '.model_id = ' + req.body.model_id);
     }
@@ -105,7 +118,7 @@ router.post('/list/:offset?', function(req, res, next) {
                     'LEFT JOIN ' + brand_table_name + ' ON ' + table_name + '.brand_id = ' + brand_table_name + '.idx ' + 
                     'LEFT JOIN ' + group_table_name + ' ON ' + table_name + '.group_id = ' + group_table_name + '.idx ' + 
                     'LEFT JOIN ' + model_table_name + ' ON ' + table_name + '.model_id = ' + model_table_name + '.idx ' + 
-                    'WHERE ' + table_name + '.idx > 0 ' + where_statement + ' LIMIT ' + offset + ', 10';
+                    'WHERE ' + table_name + '.is_deleted = 0 ' + where_statement + ' LIMIT ' + offset + ', 10';
 
     connection.query(query, table_name, (error, result, fields) => {
         if (error) {

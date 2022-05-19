@@ -2,25 +2,34 @@ var express = require('express');
 var router = express.Router();
 var connection = require('../database');
 
-//   CREATE TABLE `tbl_user` (
+// CREATE TABLE `tbl_user` (
 //     `idx` int(11) NOT NULL AUTO_INCREMENT,
-//     `type_id` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' COMMENT '구분=>0:콘텐츠, 1:자동차',
-//     `group_id` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
+//     `type_id` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '구분=>0:콘텐츠, 1:자동차',
+//     `group_id` char(1) DEFAULT NULL,
 //     `name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-//     `user_id` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+//     `user_id` varchar(45) DEFAULT NULL,
 //     `phone` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
 //     `email` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-//     `password` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+//     `password` varchar(45) DEFAULT NULL,
+//     `created_at` datetime DEFAULT NULL,
+//     `created_by` int(11) DEFAULT NULL,
+//     `updated_at` datetime DEFAULT NULL,
+//     `updated_by` int(11) DEFAULT NULL,
+//     `deleted_at` datetime DEFAULT NULL,
+//     `deleted_by` int(11) DEFAULT NULL,
+//     `is_deleted` tinyint(1) DEFAULT NULL,
 //     PRIMARY KEY (`idx`)
-//   ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+//   ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;  
 
 const table_name = 'tbl_user';
-const table_fields = ['type_id', 'group_id', 'name', 'user_id', 'phone', 'email', 'password'];
+const table_fields = [
+    'type_id', 'group_id', 'name', 'user_id', 'phone', 'email', 'password', 'created_at', 'created_by', 'updated_at', 'updated_by', 'deleted_at', 'deleted_by', 'is_deleted'
+];
 
-const group_table_name = 'tbl_model_group';
+const group_table_name = 'tbl_group';
 
 router.get('/option-list', function(req, res, next) {
-    const query = 'SELECT idx as value, name as label FROM ??';
+    const query = 'SELECT idx as value, name as label FROM ?? WHERE is_deleted = 0';
 
     connection.query(query, table_name, (error, result, fields) => {
         if (error) {
@@ -102,7 +111,7 @@ router.post('/list/:offset?', function(req, res, next) {
     const query =   'SELECT ' + table_name + '.*, ' + group_table_name + '.group_name ' + 
                     'FROM ?? ' + 
                     'LEFT JOIN ' + group_table_name + ' ON ' + table_name + '.group_id = ' + group_table_name + '.idx ' + 
-                    'WHERE ' + table_name + '.idx > 0 ' + where_statement + ' LIMIT ' + offset + ', 10';
+                    'WHERE ' + table_name + '.is_deleted = 0 ' + where_statement + ' LIMIT ' + offset + ', 10';
 
     connection.query(query, table_name, (error, result, fields) => {
         if (error) {

@@ -1,8 +1,7 @@
 var logger = require('morgan');
 var express = require('express');
 var cookieParser = require('cookie-parser');
-var indexRouter = require('./routes/index');
-var testRouter = require('./routes/test');
+
 var fileRouter = require('./routes/file');
 var brandRouter = require('./routes/brand');
 var groupRouter = require('./routes/group');
@@ -40,8 +39,6 @@ app.use(cookieParser());
 
 app.use(cors({ origin: '*' }));
 
-app.use('/api', indexRouter);
-app.use('/test', testRouter);
 app.use('/file', fileRouter);
 app.use('/brand', brandRouter);
 app.use('/group', groupRouter);

@@ -2,21 +2,30 @@ var express = require('express');
 var router = express.Router();
 var connection = require('../database');
 
-//   CREATE TABLE `tbl_count_setting` (
+// CREATE TABLE `tbl_count_setting` (
 //     `idx` int(11) NOT NULL AUTO_INCREMENT,
 //     `rent_min` int(11) DEFAULT NULL,
 //     `rent_max` int(11) DEFAULT NULL,
 //     `new_min` int(11) DEFAULT NULL,
 //     `new_max` int(11) DEFAULT NULL,
 //     `hour` int(11) DEFAULT NULL,
+//     `created_at` datetime DEFAULT NULL,
+//     `created_by` int(11) DEFAULT NULL,
+//     `updated_at` datetime DEFAULT NULL,
+//     `updated_by` int(11) DEFAULT NULL,
+//     `deleted_at` datetime DEFAULT NULL,
+//     `deleted_by` int(11) DEFAULT NULL,
+//     `is_deleted` tinyint(1) DEFAULT NULL,
 //     PRIMARY KEY (`idx`)
-//   ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+//   ) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8;  
 
 const table_name = 'tbl_count_setting';
-const table_fields = ['rent_min', 'rent_max', 'new_min', 'new_max', 'hour'];
+const table_fields = [
+    'rent_min', 'rent_max', 'new_min', 'new_max', 'hour', 'created_at', 'created_by', 'updated_at', 'updated_by', 'deleted_at', 'deleted_by', 'is_deleted'
+];
 
 router.get('/option-list', function(req, res, next) {
-    const query = 'SELECT idx as value, brand_name as label FROM ??';
+    const query = 'SELECT idx as value, brand_name as label FROM ?? WHERE is_deleted = 0';
 
     connection.query(query, table_name, (error, result, fields) => {
         if (error) {

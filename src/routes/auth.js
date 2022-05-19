@@ -17,10 +17,10 @@ var connection = require('../database');
 const table_name = 'tbl_user';
 const table_fields = ['type_id', 'group_id', 'name', 'user_id', 'phone', 'email', 'password'];
 
-const group_table_name = 'tbl_model_group';
+const group_table_name = 'tbl_group';
 
 router.get('/option-list', function(req, res, next) {
-    const query = 'SELECT idx as value, name as label FROM ??';
+    const query = 'SELECT idx as value, name as label FROM ?? WHERE is_deleted = 0';
 
     connection.query(query, table_name, (error, result, fields) => {
         if (error) {
@@ -102,7 +102,7 @@ router.post('/list/:offset?', function(req, res, next) {
     const query =   'SELECT ' + table_name + '.*, ' + group_table_name + '.group_name ' + 
                     'FROM ?? ' + 
                     'LEFT JOIN ' + group_table_name + ' ON ' + table_name + '.group_id = ' + group_table_name + '.idx ' + 
-                    'WHERE ' + table_name + '.idx > 0 ' + where_statement + ' LIMIT ' + offset + ', 10';
+                    'WHERE ' + table_name + '.is_deleted = 0 ' + where_statement + ' LIMIT ' + offset + ', 10';
 
     connection.query(query, table_name, (error, result, fields) => {
         if (error) {

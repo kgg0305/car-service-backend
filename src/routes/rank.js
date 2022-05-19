@@ -2,19 +2,28 @@ var express = require('express');
 var router = express.Router();
 var connection = require('../database');
 
-//   CREATE TABLE `tbl_rank` (
+// CREATE TABLE `tbl_rank` (
 //     `idx` int(11) NOT NULL AUTO_INCREMENT,
-//     `type` int(11) DEFAULT NULL COMMENT '1: 자동차 인기순위, 2: 콘텐츠 인기순위, 3: 동영상 인기순위',
+//     `type` int(11) DEFAULT NULL COMMENT '1: 자동차 인기순위\n2: 콘텐츠 인기순위\n3: 동영상 인기순위',
 //     `ids` text,
 //     `created_date` datetime DEFAULT NULL,
+//     `created_at` datetime DEFAULT NULL,
+//     `created_by` int(11) DEFAULT NULL,
+//     `updated_at` datetime DEFAULT NULL,
+//     `updated_by` int(11) DEFAULT NULL,
+//     `deleted_at` datetime DEFAULT NULL,
+//     `deleted_by` int(11) DEFAULT NULL,
+//     `is_deleted` tinyint(1) DEFAULT NULL,
 //     PRIMARY KEY (`idx`)
-//   ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;  
+//   ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;   
   
 const table_name = 'tbl_rank';
-const table_fields = ['type', 'ids', 'created_date'];
+const table_fields = [
+    'type', 'ids', 'created_date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'deleted_at', 'deleted_by', 'is_deleted'
+];
 
 router.get('/option-list', function(req, res, next) {
-    const query = 'SELECT idx as value, title as label FROM ??';
+    const query = 'SELECT idx as value, title as label FROM ?? WHERE is_deleted = 0';
 
     connection.query(query, table_name, (error, result, fields) => {
         if (error) {
@@ -82,7 +91,7 @@ router.post('/list/:offset?', function(req, res, next) {
     
     const where_statement = where_array.length != 0 ? 'AND ' + where_array.join(' AND ') : '';
 
-    const query = 'SELECT * FROM ?? WHERE idx > 0 ' + where_statement + ' LIMIT ' + offset + ', 10';
+    const query = 'SELECT * FROM ?? WHERE is_deleted = 0 ' + where_statement + ' LIMIT ' + offset + ', 10';
 
     connection.query(query, table_name, (error, result, fields) => {
         if (error) {

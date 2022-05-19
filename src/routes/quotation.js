@@ -3,7 +3,7 @@ const excel = require("exceljs");
 var router = express.Router();
 var connection = require('../database');
 
-//   CREATE TABLE `tbl_quotation` (
+// CREATE TABLE `tbl_quotation` (
 //     `idx` int(11) NOT NULL AUTO_INCREMENT,
 //     `purchase_path` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
 //     `purchase_method` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -23,13 +23,19 @@ var connection = require('../database');
 //     `is_close` char(1) DEFAULT NULL,
 //     `note` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
 //     `assign_to` int(11) DEFAULT NULL,
+//     `created_at` datetime DEFAULT NULL,
+//     `created_by` int(11) DEFAULT NULL,
+//     `updated_at` datetime DEFAULT NULL,
+//     `updated_by` int(11) DEFAULT NULL,
+//     `deleted_at` datetime DEFAULT NULL,
+//     `deleted_by` int(11) DEFAULT NULL,
+//     `is_deleted` tinyint(1) DEFAULT NULL,
 //     PRIMARY KEY (`idx`)
 //   ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 const table_name = 'tbl_quotation';
 const table_fields = [
-    'purchase_path', 'purchase_method', 'reg_date', 'client_name', 'client_phone', 'brand_id', 'model_id', 'lineup_id', 'car_kind_id', 
-    'trim_id', 'is_business', 'is_contract', 'contract_date', 'is_release', 'release_date', 'is_close', 'note', 'assign_to'
+    'purchase_path', 'purchase_method', 'reg_date', 'client_name', 'client_phone', 'brand_id', 'model_id', 'lineup_id', 'car_kind_id', 'trim_id', 'is_business', 'is_contract', 'contract_date', 'is_release', 'release_date', 'is_close', 'note', 'assign_to', 'created_at', 'created_by', 'updated_at', 'updated_by', 'deleted_at', 'deleted_by', 'is_deleted'
 ];
 
 const brand_table_name = 'tbl_brand';
@@ -39,7 +45,7 @@ const trim_table_name = 'tbl_trim';
 const car_kind_table_name = 'tbl_car_kind';
 
 router.get('/option-list', function(req, res, next) {
-    const query = 'SELECT idx as value, purchase_method as label FROM ??';
+    const query = 'SELECT idx as value, purchase_method as label FROM ?? WHERE is_deleted = 0';
 
     connection.query(query, table_name, (error, result, fields) => {
         if (error) {
@@ -190,7 +196,7 @@ router.post('/list/:offset?', function(req, res, next) {
                     'LEFT JOIN ' + model_table_name + ' ON ' + table_name + '.model_id = ' + model_table_name + '.idx ' + 
                     'LEFT JOIN ' + lineup_table_name + ' ON ' + table_name + '.lineup_id = ' + lineup_table_name + '.idx ' + 
                     'LEFT JOIN ' + car_kind_table_name + ' ON ' + table_name + '.car_kind_id = ' + car_kind_table_name + '.idx ' + 
-                    'WHERE ' + table_name + '.idx > 0 ' + where_statement + ' LIMIT ' + offset + ', 10';
+                    'WHERE ' + table_name + '.is_deleted = 0 ' + where_statement + ' LIMIT ' + offset + ', 10';
 
     connection.query(query, table_name, (error, result, fields) => {
         if (error) {
@@ -244,7 +250,7 @@ router.post('/count', function(req, res, next) {
 
     const query =   'SELECT COUNT(*) as count ' +
                     'FROM ?? ' + 
-                    'WHERE idx > 0 ' + where_statement;
+                    'WHERE is_deleted = 0 ' + where_statement;
 
     connection.query(query, table_name, (error, result, fields) => {
         if (error) {

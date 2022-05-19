@@ -2,21 +2,30 @@ var express = require('express');
 var router = express.Router();
 var connection = require('../database');
 
-//   CREATE TABLE `tbl_user_role` (
+// CREATE TABLE `tbl_user_role` (
 //     `idx` int(11) NOT NULL AUTO_INCREMENT,
 //     `name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
 //     `user_id` int(11) DEFAULT NULL COMMENT '사용자아이디',
 //     `status` varchar(50) DEFAULT NULL COMMENT '권한',
+//     `created_at` datetime DEFAULT NULL,
+//     `created_by` int(11) DEFAULT NULL,
+//     `updated_at` datetime DEFAULT NULL,
+//     `updated_by` int(11) DEFAULT NULL,
+//     `deleted_at` datetime DEFAULT NULL,
+//     `deleted_by` int(11) DEFAULT NULL,
+//     `is_deleted` tinyint(1) DEFAULT NULL,
 //     PRIMARY KEY (`idx`)
-//   ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+//   ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;  
 
 const table_name = 'tbl_user_role';
-const table_fields = ['name', 'user_id', 'status'];
+const table_fields = [
+    'name', 'user_id', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by', 'deleted_at', 'deleted_by', 'is_deleted'
+];
 
 const user_table_name = 'tbl_user';
 
 router.get('/option-list', function(req, res, next) {
-    const query = 'SELECT idx as value, name as label FROM ??';
+    const query = 'SELECT idx as value, name as label FROM ?? WHERE is_deleted = 0';
 
     connection.query(query, table_name, (error, result, fields) => {
         if (error) {
@@ -98,7 +107,7 @@ router.post('/list/:offset?', function(req, res, next) {
     const query =   'SELECT ' + table_name + '.*, ' + user_table_name + '.name as user_name ' + 
                     'FROM ?? ' + 
                     'LEFT JOIN ' + user_table_name + ' ON ' + table_name + '.user_id = ' + user_table_name + '.idx ' + 
-                    'WHERE ' + table_name + '.idx > 0 ' + where_statement + ' LIMIT ' + offset + ', 10';
+                    'WHERE ' + table_name + '.is_deleted = 0 ' + where_statement + ' LIMIT ' + offset + ', 10';
 
     connection.query(query, table_name, (error, result, fields) => {
         if (error) {

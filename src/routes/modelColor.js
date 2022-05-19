@@ -2,21 +2,30 @@ var express = require('express');
 var router = express.Router();
 var connection = require('../database');
 
-//   CREATE TABLE `tbl_model_color` (
+// CREATE TABLE `tbl_model_color` (
 //     `idx` int(11) NOT NULL AUTO_INCREMENT,
 //     `model_id` int(11) DEFAULT NULL COMMENT '모델아이디',
 //     `name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '모델/라인업 색상이름',
 //     `price` int(11) DEFAULT NULL COMMENT '모델/라인업 색상 가격',
+//     `created_at` datetime DEFAULT NULL,
+//     `created_by` int(11) DEFAULT NULL,
+//     `updated_at` datetime DEFAULT NULL,
+//     `updated_by` int(11) DEFAULT NULL,
+//     `deleted_at` datetime DEFAULT NULL,
+//     `deleted_by` int(11) DEFAULT NULL,
+//     `is_deleted` tinyint(1) DEFAULT NULL,
 //     PRIMARY KEY (`idx`)
-//   ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+//   ) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8;  
 
 const table_name = 'tbl_model_color';
-const table_fields = ['model_id', 'name', 'price'];
+const table_fields = [
+    'model_id', 'name', 'price', 'created_at', 'created_by', 'updated_at', 'updated_by', 'deleted_at', 'deleted_by', 'is_deleted'
+];
 
 const model_table_name = 'tbl_model';
 
 router.get('/option-list', function(req, res, next) {
-    const query = 'SELECT idx as value, model_name as label FROM ??';
+    const query = 'SELECT idx as value, model_name as label FROM ?? WHERE is_deleted = 0';
 
     connection.query(query, table_name, (error, result, fields) => {
         if (error) {
@@ -87,7 +96,7 @@ router.post('/list/:offset?', function(req, res, next) {
     const query =   'SELECT ' + table_name + '.*, ' + model_table_name + '.model_name ' + 
                     'FROM ?? ' + 
                     'LEFT JOIN ' + model_table_name + ' ON ' + table_name + '.model_id = ' + model_table_name + '.idx ' + 
-                    'WHERE ' + table_name + '.idx > 0 ' + where_statement + ' LIMIT ' + offset + ', 10';
+                    'WHERE ' + table_name + '.is_deleted = 0 ' + where_statement + ' LIMIT ' + offset + ', 10';
 
     connection.query(query, table_name, (error, result, fields) => {
         if (error) {

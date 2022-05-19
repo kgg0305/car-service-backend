@@ -3,20 +3,29 @@ var router = express.Router();
 var connection = require('../database');
 
 // CREATE TABLE `tbl_count` (
-//   `idx` int(11) NOT NULL AUTO_INCREMENT,
-//   `reg_date` date DEFAULT NULL,
-//   `rent_request`  int(11) DEFAULT NULL,
-//   `rent_admin`  int(11) DEFAULT NULL,
-//   `new_request` int(11) DEFAULT NULL,
-//   `new_admin` int(11) DEFAULT NULL,
-//   PRIMARY KEY (`idx`)
-// ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+//     `idx` int(11) NOT NULL AUTO_INCREMENT,
+//     `reg_date` date DEFAULT NULL,
+//     `rent_request` int(11) DEFAULT NULL,
+//     `rent_admin` int(11) DEFAULT NULL,
+//     `new_request` int(11) DEFAULT NULL,
+//     `new_admin` int(11) DEFAULT NULL,
+//     `created_at` datetime DEFAULT NULL,
+//     `created_by` int(11) DEFAULT NULL,
+//     `updated_at` datetime DEFAULT NULL,
+//     `updated_by` int(11) DEFAULT NULL,
+//     `deleted_at` datetime DEFAULT NULL,
+//     `deleted_by` int(11) DEFAULT NULL,
+//     `is_deleted` tinyint(1) DEFAULT NULL,
+//     PRIMARY KEY (`idx`)
+//   ) ENGINE=InnoDB DEFAULT CHARSET=utf8;  
 
 const table_name = 'tbl_count';
-const table_fields = ['reg_date', 'rent_request', 'rent_admin', 'new_request', 'new_admin'];
+const table_fields = [
+    'reg_date', 'rent_request', 'rent_admin', 'new_request', 'new_admin', 'created_at', 'created_by', 'updated_at', 'updated_by', 'deleted_at', 'deleted_by', 'is_deleted'
+];
 
 router.get('/option-list', function(req, res, next) {
-    const query = 'SELECT idx as value, brand_name as label FROM ??';
+    const query = 'SELECT idx as value, brand_name as label FROM ?? WHERE is_deleted = 0';
 
     connection.query(query, table_name, (error, result, fields) => {
         if (error) {
@@ -102,7 +111,7 @@ router.post('/list/:offset?', function(req, res, next) {
     
     const where_statement = where_array.length != 0 ? 'AND ' + where_array.join(' AND ') : '';
 
-    const query = 'SELECT * FROM ?? WHERE idx > 0 ' + where_statement + ' LIMIT ' + offset + ', 10';
+    const query = 'SELECT * FROM ?? WHERE is_deleted = 0 ' + where_statement + ' LIMIT ' + offset + ', 10';
 
     connection.query(query, table_name, (error, result, fields) => {
         if (error) {

@@ -2,11 +2,11 @@ var express = require('express');
 var router = express.Router();
 var connection = require('../database');
 
-//   CREATE TABLE `tbl_car_kind` (
+// CREATE TABLE `tbl_car_kind` (
 //     `idx` int(11) NOT NULL AUTO_INCREMENT,
 //     `kind_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '차종이름',
 //     PRIMARY KEY (`idx`)
-//   ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+//   ) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;  
 
 const table_name = 'tbl_car_kind';
 const table_fields = ['kind_name'];

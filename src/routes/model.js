@@ -1,8 +1,11 @@
 var express = require('express');
+var multer = require('multer');
 var router = express.Router();
 var connection = require('../database');
 
-//   CREATE TABLE `tbl_model` (
+var upload = multer({ dest: process.env.Image_PATH + '/uploads/model/'});
+
+// CREATE TABLE `tbl_model` (
 //     `idx` int(11) NOT NULL AUTO_INCREMENT,
 //     `group_id` int(11) NOT NULL COMMENT '모델그룹아이디\n',
 //     `brand_id` int(11) DEFAULT NULL COMMENT '브랜드 아이디',
@@ -20,18 +23,23 @@ var connection = require('../database');
 //     `picture_6` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '사진06',
 //     `picture_7` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '사진07',
 //     `picture_8` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '사진08',
-//     `created_date` datetime DEFAULT NULL COMMENT '등록일',
+//     `created_at` datetime DEFAULT NULL,
+//     `created_by` int(11) DEFAULT NULL,
+//     `updated_at` datetime DEFAULT NULL,
+//     `updated_by` int(11) DEFAULT NULL,
+//     `deleted_at` datetime DEFAULT NULL,
+//     `deleted_by` int(11) DEFAULT NULL,
+//     `is_deleted` tinyint(1) DEFAULT NULL,
 //     PRIMARY KEY (`idx`)
-//   ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+//   ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 
 const table_name = 'tbl_model';
 const table_fields = [
-    'group_id', 'brand_id', 'model_name', 'is_new', 'release_date', 'sequence', 'is_use', 
-    'picture_1', 'picture_2', 'picture_3', 'picture_4', 'picture_5', 'picture_6', 'picture_7', 'picture_8', 'created_date', 'discount_condition_ids'
+    'group_id', 'brand_id', 'model_name', 'is_new', 'release_date', 'sequence', 'is_use', 'discount_condition_ids', 'picture_1', 'picture_2', 'picture_3', 'picture_4', 'picture_5', 'picture_6', 'picture_7', 'picture_8', 'created_at', 'created_by', 'updated_at', 'updated_by', 'deleted_at', 'deleted_by', 'is_deleted'
 ];
 
 const brand_table_name = 'tbl_brand';
-const model_group_table_name = 'tbl_model_group';
+const model_group_table_name = 'tbl_group';
 
 router.get('/option-list', function(req, res, next) {
     const query = 'SELECT idx as value, model_name as label, brand_id, group_id FROM ??';
@@ -122,7 +130,7 @@ router.post('/list/:offset?', function(req, res, next) {
                     'FROM ?? ' + 
                     'LEFT JOIN ' + brand_table_name + ' ON ' + table_name + '.brand_id = ' + brand_table_name + '.idx ' + 
                     'LEFT JOIN ' + model_group_table_name + ' ON ' + table_name + '.group_id = ' + model_group_table_name + '.idx ' + 
-                    'WHERE ' + table_name + '.idx > 0 ' + where_statement + ' LIMIT ' + offset + ', 10';
+                    'WHERE ' + table_name + '.is_deleted = 0 ' + where_statement + ' LIMIT ' + offset + ', 10';
 
     connection.query(query, table_name, (error, result, fields) => {
         if (error) {
@@ -147,6 +155,10 @@ router.post('/check-name', function(req, res, next) {
         
         res.send(result[0].count == 0 ? { exist: false } : { exist: true });
     });
+});
+
+router.post('/upload-image', upload.single('image'), function(req, res, next) {    
+    res.send(req.file);
 });
 
 router.put('/:idx', function(req, res, next) {

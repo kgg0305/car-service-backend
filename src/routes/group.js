@@ -2,17 +2,26 @@ var express = require('express');
 var router = express.Router();
 var connection = require('../database');
 
-//   CREATE TABLE `tbl_model_group` (
+// CREATE TABLE `tbl_group` (
 //     `idx` int(11) NOT NULL AUTO_INCREMENT,
 //     `brand_id` int(11) NOT NULL COMMENT '브랜드 아이디',
 //     `group_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '모델그룹명',
 //     `car_kind_id` int(11) NOT NULL COMMENT '차종아이디',
 //     `is_use` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' COMMENT '사용여부=>0:사용, 1:미사용',
+//     `created_at` datetime DEFAULT NULL,
+//     `created_by` int(11) DEFAULT NULL,
+//     `updated_at` datetime DEFAULT NULL,
+//     `updated_by` int(11) DEFAULT NULL,
+//     `deleted_at` datetime DEFAULT NULL,
+//     `deleted_by` int(11) DEFAULT NULL,
+//     `is_deleted` tinyint(1) DEFAULT NULL,
 //     PRIMARY KEY (`idx`)
-//   ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+//   ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;  
 
-const table_name = 'tbl_model_group';
-const table_fields = ['brand_id', 'group_name', 'car_kind_id', 'is_use'];
+const table_name = 'tbl_group';
+const table_fields = [
+    'brand_id', 'group_name', 'car_kind_id', 'is_use', 'created_at', 'created_by', 'updated_at', 'updated_by', 'deleted_at', 'deleted_by', 'is_deleted'
+];
 
 const brand_table_name = 'tbl_brand';
 const car_kind_table_name = 'tbl_car_kind';
@@ -98,7 +107,7 @@ router.post('/list/:offset?', function(req, res, next) {
                     'FROM ?? ' + 
                     'LEFT JOIN ' + brand_table_name + ' ON ' + table_name + '.brand_id = ' + brand_table_name + '.idx ' + 
                     'LEFT JOIN ' + car_kind_table_name + ' ON ' + table_name + '.car_kind_id = ' + car_kind_table_name + '.idx ' + 
-                    'WHERE ' + table_name + '.idx > 0 ' + where_statement + ' LIMIT ' + offset + ', 10';
+                    'WHERE ' + table_name + '.is_deleted = 0 ' + where_statement + ' LIMIT ' + offset + ', 10';
 
     connection.query(query, table_name, (error, result, fields) => {
         if (error) {

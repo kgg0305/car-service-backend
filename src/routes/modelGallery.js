@@ -2,23 +2,30 @@ var express = require('express');
 var router = express.Router();
 var connection = require('../database');
 
-//   CREATE TABLE `tbl_model_gallery` (
+// CREATE TABLE `tbl_model_gallery` (
 //     `idx` int(11) NOT NULL AUTO_INCREMENT,
 //     `order` int(11) NOT NULL COMMENT '노출순서',
 //     `model_id` int(11) NOT NULL COMMENT '모델아이디',
 //     `picture` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '사진',
-//     `created_date` datetime NOT NULL COMMENT '등록일',
+//     `created_at` datetime DEFAULT NULL,
+//     `created_by` int(11) DEFAULT NULL,
+//     `updated_at` datetime DEFAULT NULL,
+//     `updated_by` int(11) DEFAULT NULL,
+//     `deleted_at` datetime DEFAULT NULL,
+//     `deleted_by` int(11) DEFAULT NULL,
+//     `is_deleted` tinyint(1) DEFAULT NULL,
 //     PRIMARY KEY (`idx`)
-//   ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-  
+//   ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;  
 
 const table_name = 'tbl_model_gallery';
-const table_fields = ['order', 'model_id', 'picture', 'created_date'];
+const table_fields = [
+    'order', 'model_id', 'picture', 'created_at', 'created_by', 'updated_at', 'updated_by', 'deleted_at', 'deleted_by', 'is_deleted'
+];
 
 const model_table_name = 'tbl_model';
 
 router.get('/option-list', function(req, res, next) {
-    const query = 'SELECT idx as value, model_name as label FROM ??';
+    const query = 'SELECT idx as value, model_name as label FROM ?? WHERE is_deleted = 0';
 
     connection.query(query, table_name, (error, result, fields) => {
         if (error) {
@@ -89,7 +96,7 @@ router.post('/list/:offset?', function(req, res, next) {
     const query =   'SELECT ' + table_name + '.*, ' + model_table_name + '.model_name, ' + model_table_name + '.brand_id, ' + model_table_name + '.group_id ' + 
                     'FROM ?? ' + 
                     'LEFT JOIN ' + model_table_name + ' ON ' + table_name + '.model_id = ' + model_table_name + '.idx ' + 
-                    'WHERE ' + table_name + '.idx > 0 ' + where_statement + ' LIMIT ' + offset + ', 10';
+                    'WHERE ' + table_name + '.is_deleted = 0 ' + where_statement + ' LIMIT ' + offset + ', 10';
 
     connection.query(query, table_name, (error, result, fields) => {
         if (error) {
