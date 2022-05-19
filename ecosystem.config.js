@@ -18,6 +18,7 @@ module.exports = {
 				MySQLDB_USER: 'auto_dev',
 				MySQLDB_PASSWORD: 'auto_dev12#',
 				MySQLDB_NAME: 'automobile_dev',
+				Image_PATH: '/var/www/html',
 				Redis_HOST: 'localhost',
 				Redis_PORT: 6379
             },
@@ -29,6 +30,7 @@ module.exports = {
 				MySQLDB_USER: 'auto_dev',
 				MySQLDB_PASSWORD: 'auto_dev12#',
 				MySQLDB_NAME: 'automobile_dev',
+				Image_PATH: '/var/www/html',
 				Redis_HOST: 'localhost',
 				Redis_PORT: 6379
             },
@@ -40,6 +42,7 @@ module.exports = {
 				MySQLDB_USER: 'auto_dev',
 				MySQLDB_PASSWORD: 'auto_dev12#',
 				MySQLDB_NAME: 'automobile_dev',
+				Image_PATH: '/var/www/html',
 				Redis_HOST: 'localhost',
 				Redis_PORT: 6379
             },
