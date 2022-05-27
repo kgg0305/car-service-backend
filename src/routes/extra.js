@@ -120,11 +120,11 @@ router.post("/list/:offset?", function (req, res, next) {
   var where_array = [];
 
   if (req.body.brand_id) {
-    where_array.push(table_name + ".brand_id = " + req.body.brand_id);
+    where_array.push(brand_table_name + ".idx = " + req.body.brand_id);
   }
 
   if (req.body.group_id) {
-    where_array.push(table_name + ".group_id = " + req.body.group_id);
+    where_array.push(group_table_name + ".idx = " + req.body.group_id);
   }
 
   if (req.body.model_id) {
