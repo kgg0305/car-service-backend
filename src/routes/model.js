@@ -3,7 +3,7 @@ var multer = require("multer");
 var router = express.Router();
 var connection = require("../database");
 
-var upload = multer({ dest: process.env.Image_PATH + "/uploads/model/" });
+var upload = multer({ dest: process.env.PUBLIC_PATH + "/uploads/model/" });
 
 // CREATE TABLE `tbl_model` (
 //     `idx` int(11) NOT NULL AUTO_INCREMENT,

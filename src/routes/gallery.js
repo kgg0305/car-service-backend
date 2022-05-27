@@ -2,26 +2,28 @@ var express = require("express");
 var router = express.Router();
 var connection = require("../database");
 
-// CREATE TABLE `tbl_model_gallery` (
-//     `idx` int(11) NOT NULL AUTO_INCREMENT,
-//     `order` int(11) NOT NULL COMMENT '노출순서',
-//     `model_id` int(11) NOT NULL COMMENT '모델아이디',
-//     `picture` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '사진',
-//     `created_at` datetime DEFAULT NULL,
-//     `created_by` int(11) DEFAULT NULL,
-//     `updated_at` datetime DEFAULT NULL,
-//     `updated_by` int(11) DEFAULT NULL,
-//     `deleted_at` datetime DEFAULT NULL,
-//     `deleted_by` int(11) DEFAULT NULL,
-//     `is_deleted` tinyint(1) DEFAULT NULL,
-//     PRIMARY KEY (`idx`)
-//   ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+// CREATE TABLE `tbl_gallery` (
+//   `idx` int(11) NOT NULL AUTO_INCREMENT,
+//   `brand_id` int(11) DEFAULT NULL,
+//   `group_id` int(11) DEFAULT NULL,
+//   `model_id` int(11) DEFAULT NULL COMMENT '모델아이디',
+//   `picture_index` int(11) DEFAULT NULL COMMENT '사진',
+//   `created_at` datetime DEFAULT NULL,
+//   `created_by` int(11) DEFAULT NULL,
+//   `updated_at` datetime DEFAULT NULL,
+//   `updated_by` int(11) DEFAULT NULL,
+//   `deleted_at` datetime DEFAULT NULL,
+//   `deleted_by` int(11) DEFAULT NULL,
+//   `is_deleted` tinyint(1) NOT NULL DEFAULT '0',
+//   PRIMARY KEY (`idx`)
+// ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-const table_name = "tbl_model_gallery";
+const table_name = "tbl_gallery";
 const table_fields = [
-  "order",
+  "brand_id",
+  "group_id",
   "model_id",
-  "picture",
+  "picture_index",
   "created_at",
   "created_by",
   "updated_at",
@@ -120,9 +122,21 @@ router.post("/list/:offset?", function (req, res, next) {
     model_table_name +
     ".model_name, " +
     model_table_name +
-    ".brand_id, " +
+    ".picture_1, " +
     model_table_name +
-    ".group_id " +
+    ".picture_2, " +
+    model_table_name +
+    ".picture_3, " +
+    model_table_name +
+    ".picture_4, " +
+    model_table_name +
+    ".picture_5, " +
+    model_table_name +
+    ".picture_6, " +
+    model_table_name +
+    ".picture_7, " +
+    model_table_name +
+    ".picture_8 " +
     "FROM ?? " +
     "LEFT JOIN " +
     model_table_name +

@@ -2,18 +2,12 @@ var express = require("express");
 var router = express.Router();
 var connection = require("../database");
 
-// CREATE TABLE `tbl_trim` (
+// CREATE TABLE `tbl_popular` (
 //   `idx` int(11) NOT NULL AUTO_INCREMENT,
-//   `brand_id` int(11) DEFAULT NULL COMMENT '브랜드아이디',
-//   `group_id` int(11) DEFAULT NULL COMMENT '그룹아이디',
+//   `brand_id` int(11) DEFAULT NULL,
+//   `group_id` int(11) DEFAULT NULL,
 //   `model_id` int(11) DEFAULT NULL COMMENT '모델아이디',
-//   `lineup_id` int(11) DEFAULT NULL COMMENT '라인업아이디',
-//   `trim_name` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '라인업명',
-//   `gearbox_type` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '변속기',
-//   `price` int(11) DEFAULT NULL COMMENT '가격',
-//   `model_trim_ids` text,
-//   `is_use` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '라인업 사용여부=>0:사용, 1:미사용',
-//   `detail_meta` text,
+//   `picture_index` int(11) DEFAULT NULL COMMENT '사진',
 //   `created_at` datetime DEFAULT NULL,
 //   `created_by` int(11) DEFAULT NULL,
 //   `updated_at` datetime DEFAULT NULL,
@@ -22,20 +16,14 @@ var connection = require("../database");
 //   `deleted_by` int(11) DEFAULT NULL,
 //   `is_deleted` tinyint(1) NOT NULL DEFAULT '0',
 //   PRIMARY KEY (`idx`)
-// ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+// ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-const table_name = "tbl_trim";
+const table_name = "tbl_popular";
 const table_fields = [
   "brand_id",
   "group_id",
   "model_id",
-  "lineup_id",
-  "trim_name",
-  "gearbox_type",
-  "price",
-  "model_trim_ids",
-  "is_use",
-  "detail_meta",
+  "picture_index",
   "created_at",
   "created_by",
   "updated_at",
@@ -45,14 +33,11 @@ const table_fields = [
   "is_deleted",
 ];
 
-const brand_table_name = "tbl_brand";
-const group_table_name = "tbl_group";
 const model_table_name = "tbl_model";
-const lineup_table_name = "tbl_lineup";
 
 router.get("/option-list", function (req, res, next) {
   const query =
-    "SELECT idx as value, trim_name as label FROM ?? WHERE is_deleted = 0";
+    "SELECT idx as value, model_name as label FROM ?? WHERE is_deleted = 0";
 
   connection.query(query, table_name, (error, result, fields) => {
     if (error) {
@@ -123,24 +108,8 @@ router.post("/list/:offset?", function (req, res, next) {
 
   var where_array = [];
 
-  if (req.body.brand_id) {
-    where_array.push(table_name + ".brand_id = " + req.body.brand_id);
-  }
-
-  if (req.body.group_id) {
-    where_array.push(table_name + ".group_id = " + req.body.group_id);
-  }
-
   if (req.body.model_id) {
     where_array.push(table_name + ".model_id = " + req.body.model_id);
-  }
-
-  if (req.body.lineup_id) {
-    where_array.push(table_name + ".lineup_id = " + req.body.lineup_id);
-  }
-
-  if (req.body.is_use) {
-    where_array.push(table_name + ".is_use = " + req.body.is_use);
   }
 
   const where_statement =
@@ -150,42 +119,31 @@ router.post("/list/:offset?", function (req, res, next) {
     "SELECT " +
     table_name +
     ".*, " +
-    brand_table_name +
-    ".brand_name, " +
-    group_table_name +
-    ".group_name, " +
     model_table_name +
     ".model_name, " +
-    lineup_table_name +
-    ".lineup_name " +
+    model_table_name +
+    ".picture_1, " +
+    model_table_name +
+    ".picture_2, " +
+    model_table_name +
+    ".picture_3, " +
+    model_table_name +
+    ".picture_4, " +
+    model_table_name +
+    ".picture_5, " +
+    model_table_name +
+    ".picture_6, " +
+    model_table_name +
+    ".picture_7, " +
+    model_table_name +
+    ".picture_8 " +
     "FROM ?? " +
-    "LEFT JOIN " +
-    brand_table_name +
-    " ON " +
-    table_name +
-    ".brand_id = " +
-    brand_table_name +
-    ".idx " +
-    "LEFT JOIN " +
-    group_table_name +
-    " ON " +
-    table_name +
-    ".group_id = " +
-    group_table_name +
-    ".idx " +
     "LEFT JOIN " +
     model_table_name +
     " ON " +
     table_name +
     ".model_id = " +
     model_table_name +
-    ".idx " +
-    "LEFT JOIN " +
-    lineup_table_name +
-    " ON " +
-    table_name +
-    ".lineup_id = " +
-    lineup_table_name +
     ".idx " +
     "WHERE " +
     table_name +
@@ -207,7 +165,7 @@ router.post("/list/:offset?", function (req, res, next) {
 
 router.post("/check-name", function (req, res, next) {
   const model_name = req.body.model_name;
-  const where_statement = "trim_name = ?";
+  const where_statement = "model_name = ?";
   const query =
     "SELECT COUNT(*) as count FROM " + table_name + " WHERE " + where_statement;
 
