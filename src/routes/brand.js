@@ -62,6 +62,20 @@ router.get("/option-list", function (req, res, next) {
   });
 });
 
+router.get("/sequence", function (req, res, next) {
+  const query =
+    "SELECT MAX(sequence) as max_sequence FROM ?? WHERE is_deleted = 0";
+
+  connection.query(query, table_name, (error, result, fields) => {
+    if (error) {
+      console.error(error);
+      res.status(500).send("Internal Server Error");
+    }
+
+    res.send(result[0]);
+  });
+});
+
 router.get("/:idx", function (req, res, next) {
   const idx = req.params.idx;
   const query = "SELECT * FROM " + table_name + " WHERE idx = ? LIMIT 0, 1";

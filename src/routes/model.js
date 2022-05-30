@@ -77,6 +77,20 @@ router.get("/option-list", function (req, res, next) {
   });
 });
 
+router.get("/sequence", function (req, res, next) {
+  const query =
+    "SELECT MAX(sequence) as max_sequence FROM ?? WHERE is_deleted = 0";
+
+  connection.query(query, table_name, (error, result, fields) => {
+    if (error) {
+      console.error(error);
+      res.status(500).send("Internal Server Error");
+    }
+
+    res.send(result[0]);
+  });
+});
+
 router.get("/:idx", function (req, res, next) {
   const idx = req.params.idx;
   const query =
@@ -224,6 +238,80 @@ router.post("/list/:offset?", function (req, res, next) {
     }
 
     res.send(result);
+  });
+});
+
+router.post("/list-id", function (req, res, next) {
+  var where_array = [];
+
+  if (req.body.brand_id) {
+    where_array.push(table_name + ".brand_id = " + req.body.brand_id);
+  }
+
+  if (req.body.group_id) {
+    where_array.push(table_name + ".group_id = " + req.body.group_id);
+  }
+
+  if (req.body.is_new) {
+    where_array.push(table_name + ".is_new = " + req.body.is_new);
+  }
+
+  if (req.body.is_use) {
+    where_array.push(table_name + ".is_use = " + req.body.is_use);
+  }
+
+  const where_statement =
+    where_array.length != 0 ? "AND " + where_array.join(" AND ") : "";
+
+  const query =
+    "SELECT " +
+    table_name +
+    ".idx " +
+    "FROM ?? " +
+    "WHERE " +
+    table_name +
+    ".is_deleted = 0 " +
+    where_statement;
+
+  connection.query(query, table_name, (error, result, fields) => {
+    if (error) {
+      console.error(error);
+      res.status(500).send("Internal Server Error");
+    }
+
+    res.send(result);
+  });
+});
+
+router.post("/count", function (req, res, next) {
+  var where_array = [];
+
+  if (req.body.brand_id) {
+    where_array.push(table_name + ".brand_id = " + req.body.brand_id);
+  }
+
+  if (req.body.group_id) {
+    where_array.push(table_name + ".group_id = " + req.body.group_id);
+  }
+
+  const where_statement =
+    where_array.length != 0 ? "AND " + where_array.join(" AND ") : "";
+
+  const query =
+    "SELECT " +
+    "COUNT(*) as count " +
+    "FROM ?? " +
+    "WHERE " +
+    "is_deleted = 0 " +
+    where_statement;
+
+  connection.query(query, table_name, (error, result, fields) => {
+    if (error) {
+      console.error(error);
+      res.status(500).send("Internal Server Error");
+    }
+
+    res.send(result[0]);
   });
 });
 
