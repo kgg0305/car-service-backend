@@ -119,21 +119,19 @@ router.post("/", function (req, res, next) {
   });
 });
 
-router.post("/list/:offset?", function (req, res, next) {
-  const offset = req.params.offset ? req.params.offset : 0;
-
+router.post("/list", function (req, res, next) {
   var where_array = [];
 
   if (req.body.name) {
-    where_array.push("name = '" + req.body.name + "'");
+    where_array.push(table_name + ".name = '" + req.body.name + "'");
   }
 
   if (req.body.user_id) {
-    where_array.push("user_id = " + req.body.user_id);
+    where_array.push(table_name + ".user_id = " + req.body.user_id);
   }
 
   if (req.body.status) {
-    where_array.push("status = '" + req.body.status + "'");
+    where_array.push(table_name + ".status = '" + req.body.status + "'");
   }
 
   const where_statement =
@@ -156,10 +154,7 @@ router.post("/list/:offset?", function (req, res, next) {
     "WHERE " +
     table_name +
     ".is_deleted = 0 " +
-    where_statement +
-    " LIMIT " +
-    offset +
-    ", 10";
+    where_statement;
 
   connection.query(query, table_name, (error, result, fields) => {
     if (error) {
