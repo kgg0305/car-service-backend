@@ -60,6 +60,7 @@ const table_fields = [
   "is_deleted",
 ];
 
+const user_table_name = "tbl_user";
 const brand_table_name = "tbl_brand";
 const model_table_name = "tbl_model";
 const lineup_table_name = "tbl_lineup";
@@ -290,6 +291,8 @@ router.post("/list/:offset?", function (req, res, next) {
     "SELECT " +
     table_name +
     ".*, " +
+    user_table_name +
+    ".group_id, " +
     brand_table_name +
     ".brand_name, " +
     model_table_name +
@@ -326,6 +329,13 @@ router.post("/list/:offset?", function (req, res, next) {
     table_name +
     ".car_kind_id = " +
     car_kind_table_name +
+    ".idx " +
+    "LEFT JOIN " +
+    user_table_name +
+    " ON " +
+    table_name +
+    ".assign_to = " +
+    user_table_name +
     ".idx " +
     "WHERE " +
     table_name +

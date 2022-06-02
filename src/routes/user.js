@@ -43,7 +43,7 @@ const group_table_name = "tbl_group";
 
 router.get("/option-list", function (req, res, next) {
   const query =
-    "SELECT idx as value, name as label, user_id FROM ?? WHERE is_deleted = 0";
+    "SELECT idx as value, name as label, user_id, group_id, type_id FROM ?? WHERE is_deleted = 0";
 
   connection.query(query, table_name, (error, result, fields) => {
     if (error) {
