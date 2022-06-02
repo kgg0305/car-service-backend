@@ -134,11 +134,7 @@ router.post("/list/:offset?", function (req, res, next) {
     table_name +
     ".*, " +
     brand_table_name +
-    ".brand_name, " +
-    discount_condition_table_name +
-    ".condition_name, " +
-    discount_condition_table_name +
-    ".discount_price " +
+    ".brand_name " +
     "FROM ?? " +
     "LEFT JOIN " +
     brand_table_name +
@@ -147,13 +143,6 @@ router.post("/list/:offset?", function (req, res, next) {
     ".brand_id = " +
     brand_table_name +
     ".idx " +
-    "LEFT JOIN " +
-    discount_condition_table_name +
-    " ON " +
-    table_name +
-    ".idx = " +
-    discount_condition_table_name +
-    ".discount_kind_id " +
     "WHERE " +
     table_name +
     ".is_deleted = 0 " +
