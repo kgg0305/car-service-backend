@@ -142,7 +142,11 @@ router.post("/list", function (req, res, next) {
     table_name +
     ".*, " +
     user_table_name +
-    ".name as user_name " +
+    ".name as user_name, " +
+    user_table_name +
+    ".user_id as user_id, " +
+    user_table_name +
+    ".idx as user_idx " +
     "FROM ?? " +
     "LEFT JOIN " +
     user_table_name +
