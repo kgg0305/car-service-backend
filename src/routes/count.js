@@ -131,6 +131,14 @@ router.post("/list/:offset?", function (req, res, next) {
     where_array.push("is_use = " + req.body.is_use);
   }
 
+  if (req.body.year) {
+    where_array.push("YEAR(created_at) = " + req.body.year);
+  }
+
+  if (req.body.month) {
+    where_array.push("MONTH(created_at) = " + req.body.month);
+  }
+
   const where_statement =
     where_array.length != 0 ? "AND " + where_array.join(" AND ") : "";
 
