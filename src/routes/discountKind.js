@@ -162,9 +162,6 @@ router.post("/list/:offset?", function (req, res, next) {
 });
 
 router.post("/count", function (req, res, next) {
-  const offset = req.params.offset ? req.params.offset : 0;
-  var where_array = [];
-
   if (req.body.brand_id) {
     where_array.push(table_name + ".brand_id = " + req.body.brand_id);
   }
@@ -184,7 +181,8 @@ router.post("/count", function (req, res, next) {
   const where_statement =
     where_array.length != 0 ? "AND " + where_array.join(" AND ") : "";
 
-  const query = "SELECT COUNT(*) as count FROM ?? " + where_statement;
+  const query =
+    "SELECT COUNT(*) as count FROM ?? WHERE is_deleted = 0 " + where_statement;
 
   connection.query(query, table_name, (error, result, fields) => {
     if (error) {
