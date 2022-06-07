@@ -161,6 +161,41 @@ router.post("/list/:offset?", function (req, res, next) {
   });
 });
 
+router.post("/count", function (req, res, next) {
+  const offset = req.params.offset ? req.params.offset : 0;
+  var where_array = [];
+
+  if (req.body.brand_id) {
+    where_array.push(table_name + ".brand_id = " + req.body.brand_id);
+  }
+
+  if (req.body.idx) {
+    where_array.push(table_name + ".idx = " + req.body.idx);
+  }
+
+  if (req.body.s_date) {
+    where_array.push(table_name + ".s_date >= '" + req.body.s_date + "'");
+  }
+
+  if (req.body.e_date) {
+    where_array.push(table_name + ".e_date <= '" + req.body.e_date + "'");
+  }
+
+  const where_statement =
+    where_array.length != 0 ? "AND " + where_array.join(" AND ") : "";
+
+  const query = "SELECT COUNT(*) as count FROM ?? " + where_statement;
+
+  connection.query(query, table_name, (error, result, fields) => {
+    if (error) {
+      console.error(error);
+      res.status(500).send("Internal Server Error");
+    }
+
+    res.send(result[0]);
+  });
+});
+
 router.post("/check-name", function (req, res, next) {
   const kind_name = req.body.kind_name;
   const where_statement = "kind_name = ?";

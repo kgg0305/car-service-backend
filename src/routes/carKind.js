@@ -111,6 +111,32 @@ router.post("/list/:offset?", function (req, res, next) {
   });
 });
 
+router.post("/count", function (req, res, next) {
+  var where_array = [];
+
+  if (req.body.idx) {
+    where_array.push('idx = "' + req.body.idx + '"');
+  }
+
+  if (req.body.kind_name) {
+    where_array.push("kind_name = " + req.body.kind_name);
+  }
+
+  const where_statement =
+    where_array.length != 0 ? "AND " + where_array.join(" AND ") : "";
+
+  const query = "SELECT * FROM ?? WHERE idx > 0 " + where_statement;
+
+  connection.query(query, table_name, (error, result, fields) => {
+    if (error) {
+      console.error(error);
+      res.status(500).send("Internal Server Error");
+    }
+
+    res.send(result[0]);
+  });
+});
+
 router.post("/check-name", function (req, res, next) {
   const kind_name = req.body.kind_name;
   const where_statement = "kind_name = ?";

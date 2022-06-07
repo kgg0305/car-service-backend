@@ -179,6 +179,37 @@ router.post("/list/:offset?", function (req, res, next) {
   });
 });
 
+router.post("/count", function (req, res, next) {
+  var where_array = [];
+
+  if (req.body.type_id) {
+    where_array.push("type_id = '" + req.body.type_id + "'");
+  }
+
+  if (req.body.group_id) {
+    where_array.push("group_id = " + req.body.group_id);
+  }
+
+  if (req.body.name) {
+    where_array.push("name = '" + req.body.name + "'");
+  }
+
+  const where_statement =
+    where_array.length != 0 ? "AND " + where_array.join(" AND ") : "";
+
+  const query =
+    "SELECT COUNT(*) as count FROM ?? WHERE is_deleted = 0 " + where_statement;
+
+  connection.query(query, table_name, (error, result, fields) => {
+    if (error) {
+      console.error(error);
+      res.status(500).send("Internal Server Error");
+    }
+
+    res.send(result[0]);
+  });
+});
+
 router.post("/check-name", function (req, res, next) {
   const name = req.body.name;
   const where_statement = "name = ?";

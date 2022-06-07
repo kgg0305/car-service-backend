@@ -164,6 +164,37 @@ router.post("/list/:offset?", function (req, res, next) {
   });
 });
 
+router.post("/count", function (req, res, next) {
+  var where_array = [];
+
+  if (req.body.brand_id) {
+    where_array.push(table_name + ".brand_id = " + req.body.brand_id);
+  }
+
+  if (req.body.is_use) {
+    where_array.push(table_name + ".is_use = " + req.body.is_use);
+  }
+
+  if (req.body.car_kind_id) {
+    where_array.push(table_name + ".car_kind_id = " + req.body.car_kind_id);
+  }
+
+  const where_statement =
+    where_array.length != 0 ? "AND " + where_array.join(" AND ") : "";
+
+  const query =
+    "SELECT COUNT(*) as count FROM ?? WHERE is_deleted = 0 " + where_statement;
+
+  connection.query(query, table_name, (error, result, fields) => {
+    if (error) {
+      console.error(error);
+      res.status(500).send("Internal Server Error");
+    }
+
+    res.send(result[0]);
+  });
+});
+
 router.post("/list-id", function (req, res, next) {
   var where_array = [];
 

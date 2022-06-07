@@ -184,6 +184,40 @@ router.post("/list/:offset?", function (req, res, next) {
   });
 });
 
+router.post("/count", function (req, res, next) {
+  var where_array = [];
+
+  if (req.body.brand_id) {
+    where_array.push(brand_table_name + ".idx = " + req.body.brand_id);
+  }
+
+  if (req.body.group_id) {
+    where_array.push(group_table_name + ".idx = " + req.body.group_id);
+  }
+
+  if (req.body.model_id) {
+    where_array.push(table_name + ".model_id = " + req.body.model_id);
+  }
+
+  const where_statement =
+    where_array.length != 0 ? "AND " + where_array.join(" AND ") : "";
+
+  const query =
+    "SELECT COUNT(*) as count FROM ?? WHERE " +
+    table_name +
+    ".is_deleted = 0 " +
+    where_statement;
+
+  connection.query(query, table_name, (error, result, fields) => {
+    if (error) {
+      console.error(error);
+      res.status(500).send("Internal Server Error");
+    }
+
+    res.send(result[0]);
+  });
+});
+
 router.post("/check-name", function (req, res, next) {
   const region = req.body.region;
   const where_statement = "region = ?";

@@ -142,6 +142,44 @@ router.post("/list/:offset?", function (req, res, next) {
   });
 });
 
+router.post("/count", function (req, res, next) {
+  var where_array = [];
+
+  if (req.body.idx) {
+    where_array.push('idx = "' + req.body.idx + '"');
+  }
+
+  if (req.body.title) {
+    where_array.push('title = "' + req.body.title + '"');
+  }
+
+  if (req.body.start_date) {
+    where_array.push("created_date >= " + req.body.start_date);
+  }
+
+  if (req.body.end_date) {
+    where_array.push("created_date <= " + req.body.end_date);
+  }
+
+  if (req.body.is_use) {
+    where_array.push("is_use = " + req.body.is_use);
+  }
+
+  const where_statement =
+    where_array.length != 0 ? "AND " + where_array.join(" AND ") : "";
+
+  const query = "SELECT * FROM ?? WHERE is_deleted = 0 " + where_statement;
+
+  connection.query(query, table_name, (error, result, fields) => {
+    if (error) {
+      console.error(error);
+      res.status(500).send("Internal Server Error");
+    }
+
+    res.send(result[0]);
+  });
+});
+
 router.post("/check-name", function (req, res, next) {
   const brand_name = req.body.brand_name;
   const where_statement = "brand_name = ?";

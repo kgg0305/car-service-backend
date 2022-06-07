@@ -355,6 +355,115 @@ router.post("/list/:offset?", function (req, res, next) {
   });
 });
 
+router.post("/count", function (req, res, next) {
+  var where_array = [];
+
+  if (req.body.date_type) {
+    switch (req.body.date_type) {
+      case "0":
+        if (req.body.s_date) {
+          where_array.push(
+            table_name + ".created_at >= '" + req.body.s_date + "'"
+          );
+        }
+
+        if (req.body.e_date) {
+          where_array.push(
+            table_name + ".created_at <= '" + req.body.e_date + "'"
+          );
+        }
+        break;
+
+      case "1":
+        if (req.body.s_date) {
+          where_array.push(
+            table_name + ".contract_date >= '" + req.body.s_date + "'"
+          );
+        }
+
+        if (req.body.e_date) {
+          where_array.push(
+            table_name + ".contract_date <= '" + req.body.e_date + "'"
+          );
+        }
+        break;
+
+      case "2":
+        if (req.body.s_date) {
+          where_array.push(
+            table_name + ".release_date >= '" + req.body.s_date + "'"
+          );
+        }
+
+        if (req.body.e_date) {
+          where_array.push(
+            table_name + ".release_date <= '" + req.body.e_date + "'"
+          );
+        }
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  if (req.body.purchase_method) {
+    where_array.push(
+      table_name + ".purchase_method = '" + req.body.purchase_method + "'"
+    );
+  }
+
+  if (req.body.search_type) {
+    switch (req.body.search_type) {
+      case "0":
+        if (req.body.search_text) {
+          where_array.push(
+            table_name + ".client_name = '" + req.body.search_text + "'"
+          );
+        }
+        break;
+
+      case "1":
+        if (req.body.search_text) {
+          where_array.push(
+            table_name + ".client_phone = '" + req.body.search_text + "'"
+          );
+        }
+        break;
+
+      case "2":
+        if (req.body.search_text) {
+          where_array.push(
+            car_kind_table_name + ".kind_name = '" + req.body.search_text + "'"
+          );
+        }
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  if (req.body.purchase_path) {
+    where_array.push("purchase_path = '" + req.body.purchase_path + "'");
+  }
+
+  const where_statement =
+    where_array.length != 0 ? "AND " + where_array.join(" AND ") : "";
+
+  const query =
+    "SELECT COUNT(*) as count FROM ?? WHERE is_deleted = 0 " + where_statement;
+
+  connection.query(query, table_name, (error, result, fields) => {
+    if (error) {
+      console.error(error);
+      res.status(500).send("Internal Server Error");
+    }
+
+    res.send(result[0]);
+  });
+});
+
 router.post("/check-name", function (req, res, next) {
   const brand_name = req.body.brand_name;
   const where_statement = "brand_name = ?";
