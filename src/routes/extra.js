@@ -289,6 +289,26 @@ router.post("/upload-excel", upload.single("excel"), function (req, res, next) {
         data.push([...sub_data, NULL, NULL, NULL, NULL, NULL, NULL, 0]);
       }
 
+      //validate duplicated id
+      let origin_data;
+      const sub_query = "SELECT idx FROM ??";
+
+      connection.query(sub_query, table_name, (error, result, fields) => {
+        if (error) {
+          console.error(error);
+        }
+
+        origin_data = result;
+      });
+
+      if (origin_data) {
+        origin_data.map((item) => {
+          if (data.some((sub_item) => sub_item[0] === item.idx)) {
+            data = data.filter((sub_item) => sub_item[0] !== item.idx);
+          }
+        });
+      }
+
       var field_names = table_fields.join(", ");
       var field_values = data
         .map((item) => "(" + item.map((sub_item) => sub_item).join(", ") + ")")

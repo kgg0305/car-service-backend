@@ -134,7 +134,11 @@ router.post("/list/:offset?", function (req, res, next) {
     table_name +
     ".*, " +
     brand_table_name +
-    ".brand_name " +
+    ".brand_name, " +
+    discount_condition_table_name +
+    ".condition_name, " +
+    discount_condition_table_name +
+    ".discount_price " +
     "FROM ?? " +
     "LEFT JOIN " +
     brand_table_name +
@@ -143,6 +147,13 @@ router.post("/list/:offset?", function (req, res, next) {
     ".brand_id = " +
     brand_table_name +
     ".idx " +
+    "LEFT JOIN " +
+    discount_condition_table_name +
+    " ON " +
+    table_name +
+    ".idx = " +
+    discount_condition_table_name +
+    ".discount_kind_id " +
     "WHERE " +
     table_name +
     ".is_deleted = 0 " +
@@ -182,7 +193,14 @@ router.post("/count", function (req, res, next) {
     where_array.length != 0 ? "AND " + where_array.join(" AND ") : "";
 
   const query =
-    "SELECT COUNT(*) as count FROM ?? WHERE is_deleted = 0 " + where_statement;
+    "SELECT COUNT(*) as count FROM ?? LEFT JOIN " +
+    discount_condition_table_name +
+    " ON " +
+    table_name +
+    ".idx = " +
+    discount_condition_table_name +
+    ".discount_kind_id WHERE is_deleted = 0 " +
+    where_statement;
 
   connection.query(query, table_name, (error, result, fields) => {
     if (error) {
