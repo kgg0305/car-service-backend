@@ -231,25 +231,7 @@ router.post("/count", function (req, res, next) {
     where_array.length != 0 ? "AND " + where_array.join(" AND ") : "";
 
   const query =
-    "SELECT COUNT(*) FROM ?? " +
-    "LEFT JOIN " +
-    discount_kind_table_name +
-    " ON " +
-    table_name +
-    ".discount_kind_id = " +
-    discount_kind_table_name +
-    ".idx " +
-    "LEFT JOIN " +
-    brand_table_name +
-    " ON " +
-    discount_kind_table_name +
-    ".brand_id = " +
-    brand_table_name +
-    ".idx " +
-    "WHERE " +
-    table_name +
-    ".is_deleted = 0 " +
-    where_statement;
+    "SELECT COUNT(*) FROM ?? WHERE is_deleted = 0 " + where_statement;
 
   connection.query(query, table_name, (error, result, fields) => {
     if (error) {
