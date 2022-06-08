@@ -33,6 +33,9 @@ const table_fields = [
   "is_deleted",
 ];
 
+const brand_table_name = "tbl_brand";
+const discount_kind_table_name = "tbl_discount_kind";
+
 router.get("/option-list", function (req, res, next) {
   const query =
     "SELECT idx as value, kind_name as label FROM ?? WHERE is_deleted = 0";
@@ -130,9 +133,25 @@ router.post("/list/:offset?", function (req, res, next) {
 
   var where_array = [];
 
-  if (req.body.discount_kind_id) {
+  if (req.body.brand_id) {
     where_array.push(
-      table_name + ".discount_kind_id = " + req.body.discount_kind_id
+      discount_kind_table_name + ".brand_id = " + req.body.brand_id
+    );
+  }
+
+  if (req.body.discount_kind_id) {
+    where_array.push(table_name + ".discount_kind_id = " + req.body.idx);
+  }
+
+  if (req.body.s_date) {
+    where_array.push(
+      discount_kind_table_name + ".s_date >= '" + req.body.s_date + "'"
+    );
+  }
+
+  if (req.body.e_date) {
+    where_array.push(
+      discount_kind_table_name + ".e_date <= '" + req.body.e_date + "'"
     );
   }
 
@@ -140,7 +159,34 @@ router.post("/list/:offset?", function (req, res, next) {
     where_array.length != 0 ? "AND " + where_array.join(" AND ") : "";
 
   const query =
-    "SELECT * FROM ?? WHERE is_deleted = 0 " +
+    "SELECT " +
+    table_name +
+    ".*, " +
+    brand_table_name +
+    ".brand_name, " +
+    discount_kind_table_name +
+    ".kind_name, " +
+    discount_kind_table_name +
+    ".s_date, " +
+    discount_kind_table_name +
+    ".e_date FROM ?? " +
+    "LEFT JOIN " +
+    discount_kind_table_name +
+    " ON " +
+    table_name +
+    ".discount_kind_id = " +
+    discount_kind_table_name +
+    ".idx " +
+    "LEFT JOIN " +
+    brand_table_name +
+    " ON " +
+    discount_kind_table_name +
+    ".brand_id = " +
+    brand_table_name +
+    ".idx " +
+    "WHERE " +
+    table_name +
+    ".is_deleted = 0 " +
     where_statement +
     " LIMIT " +
     offset +
@@ -159,9 +205,25 @@ router.post("/list/:offset?", function (req, res, next) {
 router.post("/count", function (req, res, next) {
   var where_array = [];
 
-  if (req.body.discount_kind_id) {
+  if (req.body.brand_id) {
     where_array.push(
-      table_name + ".discount_kind_id = " + req.body.discount_kind_id
+      discount_kind_table_name + ".brand_id = " + req.body.brand_id
+    );
+  }
+
+  if (req.body.discount_kind_id) {
+    where_array.push(table_name + ".discount_kind_id = " + req.body.idx);
+  }
+
+  if (req.body.s_date) {
+    where_array.push(
+      discount_kind_table_name + ".s_date >= '" + req.body.s_date + "'"
+    );
+  }
+
+  if (req.body.e_date) {
+    where_array.push(
+      discount_kind_table_name + ".e_date <= '" + req.body.e_date + "'"
     );
   }
 
@@ -169,7 +231,16 @@ router.post("/count", function (req, res, next) {
     where_array.length != 0 ? "AND " + where_array.join(" AND ") : "";
 
   const query =
-    "SELECT COUNT(*) as count FROM ?? WHERE is_deleted = 0 " + where_statement;
+    "SELECT COUNT(*) as count FROM ?? LEFT JOIN " +
+    discount_kind_table_name +
+    " ON " +
+    table_name +
+    ".discount_kind_id = " +
+    discount_kind_table_name +
+    ".idx WHERE " +
+    table_name +
+    ".is_deleted = 0 " +
+    where_statement;
 
   connection.query(query, table_name, (error, result, fields) => {
     if (error) {
