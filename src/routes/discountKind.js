@@ -147,7 +147,7 @@ router.post("/list/:offset?", function (req, res, next) {
     ".brand_id = " +
     brand_table_name +
     ".idx " +
-    "LEFT JOIN " +
+    "RIGHT JOIN " +
     discount_condition_table_name +
     " ON " +
     table_name +
@@ -195,7 +195,7 @@ router.post("/count", function (req, res, next) {
     where_array.length != 0 ? "AND " + where_array.join(" AND ") : "";
 
   const query =
-    "SELECT COUNT(*) as count FROM ?? LEFT JOIN " +
+    "SELECT COUNT(*) as count FROM ?? RIGHT JOIN " +
     discount_condition_table_name +
     " ON " +
     table_name +
