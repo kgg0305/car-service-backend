@@ -173,6 +173,8 @@ router.post("/list/:offset?", function (req, res, next) {
 });
 
 router.post("/count", function (req, res, next) {
+  var where_array = [];
+
   if (req.body.brand_id) {
     where_array.push(table_name + ".brand_id = " + req.body.brand_id);
   }

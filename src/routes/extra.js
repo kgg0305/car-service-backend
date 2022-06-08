@@ -283,10 +283,19 @@ router.post("/upload-excel", upload.single("excel"), function (req, res, next) {
       const work_sheet = work_book.getWorksheet("취득세");
       for (let i = 2; i <= work_sheet.actualRowCount; i++) {
         let sub_data = [];
-        for (let j = 2; j <= work_sheet.actualColumnCount; j++) {
+        for (let j = 1; j <= work_sheet.actualColumnCount; j++) {
           sub_data.push(work_sheet.getRow(i).getCell(j).value);
         }
-        data.push([...sub_data, NULL, NULL, NULL, NULL, NULL, NULL, 0]);
+        data.push([
+          ...sub_data,
+          "NULL",
+          "NULL",
+          "NULL",
+          "NULL",
+          "NULL",
+          "NULL",
+          0,
+        ]);
       }
 
       //validate duplicated id
@@ -299,34 +308,44 @@ router.post("/upload-excel", upload.single("excel"), function (req, res, next) {
         }
 
         origin_data = result;
-      });
 
-      if (origin_data) {
-        origin_data.map((item) => {
-          if (data.some((sub_item) => sub_item[0] === item.idx)) {
-            data = data.filter((sub_item) => sub_item[0] !== item.idx);
-          }
-        });
-      }
-
-      var field_names = table_fields.join(", ");
-      var field_values = data
-        .map((item) => "(" + item.map((sub_item) => sub_item).join(", ") + ")")
-        .join(", ");
-
-      const query =
-        "INSERT INTO " +
-        table_name +
-        "(" +
-        field_names +
-        ") VALUES " +
-        field_values;
-      connection.query(query, (error, result, fields) => {
-        if (error) {
-          console.error(error);
-          res.status(500).send("Internal Server Error");
+        if (origin_data) {
+          origin_data.map((item) => {
+            if (data.some((sub_item) => parseInt(sub_item[0]) === item.idx)) {
+              data = data.filter(
+                (sub_item) => parseInt(sub_item[0]) !== item.idx
+              );
+            }
+          });
         }
-        res.send(result);
+
+        var field_names = table_fields.join(", ");
+        var field_values = data
+          .map(
+            (item) =>
+              "(" +
+              item
+                .splice(1, item.length - 1)
+                .map((sub_item) => sub_item)
+                .join(", ") +
+              ")"
+          )
+          .join(", ");
+
+        const query =
+          "INSERT INTO " +
+          table_name +
+          "(" +
+          field_names +
+          ") VALUES " +
+          field_values;
+        connection.query(query, (error, result, fields) => {
+          if (error) {
+            console.error(error);
+            res.status(500).send("Internal Server Error");
+          }
+          res.send(result);
+        });
       });
     })
     .catch((err) => {
