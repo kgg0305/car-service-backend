@@ -155,7 +155,7 @@ router.post("/list/:offset?", function (req, res, next) {
     discount_condition_table_name +
     ".discount_kind_id " +
     "WHERE " +
-    table_name +
+    discount_condition_table_name +
     ".is_deleted = 0 " +
     where_statement +
     " LIMIT " +
@@ -201,7 +201,9 @@ router.post("/count", function (req, res, next) {
     table_name +
     ".idx = " +
     discount_condition_table_name +
-    ".discount_kind_id WHERE is_deleted = 0 " +
+    ".discount_kind_id WHERE " +
+    discount_condition_table_name +
+    ".is_deleted = 0 " +
     where_statement;
 
   connection.query(query, table_name, (error, result, fields) => {
