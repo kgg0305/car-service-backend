@@ -159,7 +159,7 @@ router.post("/list/:offset?", function (req, res, next) {
   }
 
   if (req.body.category_id) {
-    where_array.push("category_id = '" + req.body.category_id + "'");
+    where_array.push("category = '" + req.body.category_id + "'");
   }
 
   if (req.body.s_date) {
