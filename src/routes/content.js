@@ -3,26 +3,40 @@ var router = express.Router();
 var connection = require("../database");
 
 // CREATE TABLE `tbl_content` (
-//     `idx` int(11) NOT NULL AUTO_INCREMENT,
-//     `media_type` char(1) DEFAULT NULL COMMENT '매체명',
-//     `category_id` char(1) DEFAULT NULL COMMENT '카테고리',
-//     `title` varchar(45) DEFAULT NULL COMMENT '콘텐츠 제목',
-//     `views` int(11) DEFAULT NULL COMMENT '조회수',
-//     `is_use` char(1) DEFAULT NULL COMMENT '사용여부',
-//     `created_at` datetime DEFAULT NULL,
-//     `created_by` int(11) DEFAULT NULL,
-//     `updated_at` datetime DEFAULT NULL,
-//     `updated_by` int(11) DEFAULT NULL,
-//     `deleted_at` datetime DEFAULT NULL,
-//     `deleted_by` int(11) DEFAULT NULL,
-//     `is_deleted` tinyint(1) DEFAULT NULL,
-//     PRIMARY KEY (`idx`)
-//   ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
+//   `idx` int NOT NULL AUTO_INCREMENT,
+//   `media` varchar(45) DEFAULT NULL COMMENT '매체명',
+//   `title` varchar(45) DEFAULT NULL COMMENT '콘텐츠 제목',
+//   `views` int DEFAULT NULL COMMENT '조회수',
+//   `is_use` char(1) DEFAULT NULL COMMENT '사용여부 => 0:사용, 1:미사용',
+//   `content_number` varchar(150) DEFAULT NULL COMMENT '고유값',
+//   `thumbnail` varchar(250) DEFAULT NULL COMMENT '썸네일',
+//   `description` varchar(500) DEFAULT NULL COMMENT '본문내용',
+//   `preview` varchar(250) DEFAULT NULL COMMENT '미리보기내용',
+//   `writer` varchar(45) DEFAULT NULL COMMENT '글쓴이',
+//   `category` varchar(45) DEFAULT NULL COMMENT '카테고리',
+//   `tag` varchar(250) DEFAULT NULL COMMENT '테그',
+//   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+//   `created_by` int DEFAULT NULL,
+//   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP,
+//   `updated_by` int DEFAULT NULL,
+//   `deleted_at` datetime DEFAULT NULL,
+//   `deleted_by` int DEFAULT NULL,
+//   `is_deleted` tinyint(1) NOT NULL DEFAULT '0',
+//   PRIMARY KEY (`idx`),
+//   KEY `created_by_idx` (`created_by`),
+//   KEY `updated_by_idx` (`updated_by`),
+//   KEY `deleted_by_idx` (`deleted_by`),
+//   KEY `tbl_content_created_by_foreign` (`created_by`) /*!80000 INVISIBLE */,
+//   KEY `tbl_content_deleted_by_foreign` (`updated_by`),
+//   KEY `tbl_content_updated_by_foreign` (`deleted_by`),
+//   CONSTRAINT `tbl_content_created_by_foreign` FOREIGN KEY (`created_by`) REFERENCES `tbl_user` (`idx`) ON DELETE SET NULL,
+//   CONSTRAINT `tbl_content_deleted_by_foreign` FOREIGN KEY (`updated_by`) REFERENCES `tbl_user` (`idx`) ON DELETE SET NULL,
+//   CONSTRAINT `tbl_content_updated_by_foreign` FOREIGN KEY (`deleted_by`) REFERENCES `tbl_user` (`idx`) ON DELETE SET NULL
+// ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='콘텐츠';
 
 const table_name = "tbl_content";
 const table_fields = [
-  "media_type",
-  "category_id",
+  "media",
   "title",
   "views",
   "is_use",
@@ -71,26 +85,47 @@ router.get("/:idx", function (req, res, next) {
 });
 
 router.post("/", function (req, res, next) {
-  var field_names = table_fields.join(", ");
+  var field_names = "";
   var field_values;
   var field_value_list = [];
 
   if (Array.isArray(req.body)) {
+    temp_all_field_values = [];
+    temp_field_names = [];
     temp_field_values = [];
+
     req.body.map((item) => {
-      temp_field_values.push(
-        "(" + table_fields.map((x) => "?").join(", ") + ")"
-      );
-      field_value_list = [
-        ...field_value_list,
-        ...table_fields.map((x) => item[x]),
-      ];
+      temp_field_names = table_fields;
+      temp_field_values = [];
+      table_fields.map((x) => {
+        if (item[x] != null) {
+          temp_field_values.push("?");
+          field_value_list.push(item[x]);
+        } else {
+          temp_field_names = temp_field_names.filter((item) => item != x);
+        }
+      });
+
+      temp_all_field_values.push("(" + temp_field_values.join(", ") + ")");
     });
 
-    field_values = temp_field_values.join(", ");
+    field_values = temp_all_field_values.join(", ");
+    field_names = temp_field_names.join(", ");
   } else {
-    field_values = "(" + table_fields.map((x) => "?").join(", ") + ")";
-    field_value_list = table_fields.map((x) => req.body[x]);
+    field_names = [];
+    field_values = [];
+    field_value_list = [];
+
+    table_fields.map((x) => {
+      if (req.body[x]) {
+        field_values.push("?");
+        field_value_list.push(req.body[x]);
+      } else {
+        field_names = field_names.filter((item) => item != x);
+      }
+    });
+    field_values = "(" + field_values.join(", ") + ")";
+    field_names.join(", ");
   }
 
   const query =
