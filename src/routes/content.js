@@ -84,6 +84,20 @@ router.get("/media-option-list", function (req, res, next) {
   });
 });
 
+router.get("/category-option-list", function (req, res, next) {
+  const query =
+    "SELECT category as value, category as label FROM ?? WHERE is_deleted = 0 GROUP BY category";
+
+  connection.query(query, table_name, (error, result, fields) => {
+    if (error) {
+      console.error(error);
+      res.status(500).send("Internal Server Error");
+    }
+
+    res.send(result);
+  });
+});
+
 router.get("/:idx", function (req, res, next) {
   const idx = req.params.idx;
   const query = "SELECT * FROM " + table_name + " WHERE idx = ? LIMIT 0, 1";
@@ -174,6 +188,10 @@ router.post("/list/:offset?", function (req, res, next) {
 
   if (req.body.media) {
     where_array.push("media = '" + req.body.media + "'");
+  }
+
+  if (req.body.category) {
+    where_array.push("category = '" + req.body.category + "'");
   }
 
   if (req.body.s_date) {
