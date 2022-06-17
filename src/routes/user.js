@@ -11,13 +11,14 @@ var connection = require("../database");
 //     `phone` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
 //     `email` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
 //     `password` varchar(45) DEFAULT NULL,
+//     `is_reset_password` tinyint(1) DEFAULT 0,
 //     `created_at` datetime DEFAULT NULL,
 //     `created_by` int(11) DEFAULT NULL,
 //     `updated_at` datetime DEFAULT NULL,
 //     `updated_by` int(11) DEFAULT NULL,
 //     `deleted_at` datetime DEFAULT NULL,
 //     `deleted_by` int(11) DEFAULT NULL,
-//     `is_deleted` tinyint(1) DEFAULT NULL,
+//     `is_deleted` tinyint(1) DEFAULT 0,
 //     PRIMARY KEY (`idx`)
 //   ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
@@ -30,6 +31,7 @@ const table_fields = [
   "phone",
   "email",
   "password",
+  "is_reset_password",
   "created_at",
   "created_by",
   "updated_at",
