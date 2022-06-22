@@ -357,7 +357,10 @@ router.post("/check-name", function (req, res, next) {
   const model_name = req.body.model_name;
   const where_statement = "model_name = ?";
   const query =
-    "SELECT COUNT(*) as count FROM " + table_name + " WHERE " + where_statement;
+    "SELECT COUNT(*) as count FROM " +
+    table_name +
+    " WHERE is_deleted = 0 AND " +
+    where_statement;
 
   connection.query(query, [model_name], (error, result, fields) => {
     if (error) {
