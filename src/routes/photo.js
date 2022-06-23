@@ -172,7 +172,8 @@ router.post("/count", function (req, res, next) {
   const where_statement =
     where_array.length != 0 ? "AND " + where_array.join(" AND ") : "";
 
-  const query = "SELECT * FROM ?? WHERE is_deleted = 0 " + where_statement;
+  const query =
+    "SELECT COUNT(*) as count FROM ?? WHERE is_deleted = 0 " + where_statement;
 
   connection.query(query, table_name, (error, result, fields) => {
     if (error) {

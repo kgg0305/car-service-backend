@@ -286,7 +286,7 @@ router.post("/list-id", function (req, res, next) {
       res.status(500).send("Internal Server Error");
     }
 
-    res.send(result[0]);
+    res.send(result);
   });
 });
 

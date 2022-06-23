@@ -237,8 +237,12 @@ router.post("/count", function (req, res, next) {
     where_array.push("title LIKE '%" + req.body.title + "%'");
   }
 
-  if (req.body.category_id) {
-    where_array.push("category_id = '" + req.body.category_id + "'");
+  if (req.body.media) {
+    where_array.push("media = '" + req.body.media + "'");
+  }
+
+  if (req.body.category) {
+    where_array.push("category = '" + req.body.category + "'");
   }
 
   if (req.body.s_date) {

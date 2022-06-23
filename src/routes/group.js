@@ -37,7 +37,8 @@ const brand_table_name = "tbl_brand";
 const car_kind_table_name = "tbl_car_kind";
 
 router.get("/option-list", function (req, res, next) {
-  const query = "SELECT idx as value, group_name as label, brand_id FROM ??";
+  const query =
+    "SELECT idx as value, group_name as label, brand_id FROM ?? WHERE is_deleted = 0";
 
   connection.query(query, table_name, (error, result, fields) => {
     if (error) {
