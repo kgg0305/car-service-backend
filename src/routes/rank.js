@@ -16,7 +16,10 @@ var connection = require("../database");
 //     PRIMARY KEY (`idx`)
 //   ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 
+// 테이블명
 const table_name = "tbl_rank";
+
+// 테이블항목
 const table_fields = [
   "type",
   "ids",
@@ -29,6 +32,7 @@ const table_fields = [
   "is_deleted",
 ];
 
+// 옵션목록 얻기
 router.get("/option-list", function (req, res, next) {
   const query =
     "SELECT idx as value, title as label FROM ?? WHERE is_deleted = 0";
@@ -43,6 +47,7 @@ router.get("/option-list", function (req, res, next) {
   });
 });
 
+//아이디에 따르는 개별데이터 얻기
 router.get("/:idx", function (req, res, next) {
   const idx = req.params.idx;
   const query = "SELECT * FROM " + table_name + " WHERE idx = ? LIMIT 0, 1";
@@ -57,6 +62,7 @@ router.get("/:idx", function (req, res, next) {
   });
 });
 
+// 데이터목록 등록
 router.post("/", function (req, res, next) {
   var field_names = table_fields.join(", ");
   var field_values;
@@ -97,6 +103,7 @@ router.post("/", function (req, res, next) {
   });
 });
 
+// 검색어에 해당한 데이터목록 얻기
 router.post("/list/:offset?", function (req, res, next) {
   const offset = req.params.offset ? req.params.offset : 0;
 
@@ -126,6 +133,7 @@ router.post("/list/:offset?", function (req, res, next) {
   });
 });
 
+// 검색어에 해당한 데이터목록개수 얻기
 router.post("/count", function (req, res, next) {
   var where_array = [];
 
@@ -148,6 +156,7 @@ router.post("/count", function (req, res, next) {
   });
 });
 
+// 증복명 검사
 router.post("/check-name", function (req, res, next) {
   const brand_name = req.body.brand_name;
   const where_statement = "brand_name = ?";
@@ -164,6 +173,7 @@ router.post("/check-name", function (req, res, next) {
   });
 });
 
+// 개별데이터 수정
 router.put("/:idx", function (req, res, next) {
   var idx = req.params.idx;
   const field_names = table_fields.map((x) => x + " = ?").join(", ");
@@ -181,6 +191,7 @@ router.put("/:idx", function (req, res, next) {
   });
 });
 
+// 아이디에 따르는 데이터삭제
 router.delete("/:idx", function (req, res, next) {
   var idx = req.params.idx;
   const query = "DELETE FROM " + table_name + " WHERE idx = ?";

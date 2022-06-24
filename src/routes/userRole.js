@@ -6,7 +6,7 @@ var connection = require("../database");
 //     `idx` int(11) NOT NULL AUTO_INCREMENT,
 //     `name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
 //     `user_id` int(11) DEFAULT NULL COMMENT '사용자아이디',
-//     `status` varchar(50) DEFAULT NULL COMMENT '권한',
+//     `status` varchar(50) DEFAULT NULL COMMENT '권한 => 0:국산, 1:미국, 2:유럽, 3:일본, 4:중국',
 //     `created_at` datetime DEFAULT NULL,
 //     `created_by` int(11) DEFAULT NULL,
 //     `updated_at` datetime DEFAULT NULL,
@@ -17,7 +17,10 @@ var connection = require("../database");
 //     PRIMARY KEY (`idx`)
 //   ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 
+// 테이블명
 const table_name = "tbl_user_role";
+
+// 테이블항목
 const table_fields = [
   "name",
   "user_id",
@@ -33,6 +36,7 @@ const table_fields = [
 
 const user_table_name = "tbl_user";
 
+// 옵션목록 얻기
 router.get("/option-list", function (req, res, next) {
   const query =
     "SELECT idx as value, name as label FROM ?? WHERE is_deleted = 0";
@@ -47,6 +51,7 @@ router.get("/option-list", function (req, res, next) {
   });
 });
 
+//아이디에 따르는 개별데이터 얻기
 router.get("/:idx", function (req, res, next) {
   const idx = req.params.idx;
   const query =
@@ -79,6 +84,7 @@ router.get("/:idx", function (req, res, next) {
   });
 });
 
+// 데이터목록 등록
 router.post("/", function (req, res, next) {
   var field_names = table_fields.join(", ");
   var field_values;
@@ -170,6 +176,7 @@ router.post("/list", function (req, res, next) {
   });
 });
 
+// 증복명 검사
 router.post("/check-name", function (req, res, next) {
   const name = req.body.name;
   const where_statement = "name = ?";
@@ -186,6 +193,7 @@ router.post("/check-name", function (req, res, next) {
   });
 });
 
+// 개별데이터 수정
 router.put("/:idx", function (req, res, next) {
   var idx = req.params.idx;
   const field_names = table_fields.map((x) => x + " = ?").join(", ");
@@ -203,6 +211,7 @@ router.put("/:idx", function (req, res, next) {
   });
 });
 
+// 아이디에 따르는 데이터삭제
 router.delete("/:idx", function (req, res, next) {
   var idx = req.params.idx;
   const query = "DELETE FROM " + table_name + " WHERE idx = ?";
